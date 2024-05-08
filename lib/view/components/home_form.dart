@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class HomeForm extends StatefulWidget {
   const HomeForm({super.key});
@@ -15,7 +13,7 @@ class _HomeFormState extends State<HomeForm> {
 
   final TextEditingController secretPhraseController = TextEditingController();
 
-  List<String> algorithms = <String>["RSA", "AES"];
+  List<String> algorithms = <String>["RSA", "AES", "MD5"];
 
   late String _algorithm;
 
@@ -52,6 +50,7 @@ class _HomeFormState extends State<HomeForm> {
                   ),
                   Expanded(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text("algoritmo"),
                           DropdownButton(
@@ -72,6 +71,17 @@ class _HomeFormState extends State<HomeForm> {
                               });
                             },
                           ),
+                          ElevatedButton(
+                            onPressed: (){},
+                            child: Text("Aplicar"),
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.zero,
+                                )
+                              )
+                            )
+                          )
                         ],
                       )
                   ),
@@ -98,12 +108,23 @@ class _HomeFormState extends State<HomeForm> {
                   Expanded(
                     child: Row(
                       children: [
-                        ElevatedButton(onPressed: (){}, child: Text("Procurar")),
+                        ElevatedButton(
+                            onPressed: (){},
+                            child: Text("Procurar"),
+                            style: ButtonStyle(
+                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.zero,
+                                    )
+                                )
+                            )
+                        ),
                       ],
                     )
                   ),
                   Expanded(
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text("algoritmo"),
                         ],
@@ -120,7 +141,7 @@ class _HomeFormState extends State<HomeForm> {
                 ],
               ),
               SizedBox(height: 30,),
-              Row(
+              _algorithm == "RSA" ?  Row(
                 children: [
                   Expanded(
                     child: TextFormField(
@@ -138,7 +159,15 @@ class _HomeFormState extends State<HomeForm> {
                     ),
                   ),
                   Expanded(
-                      child: Text("Text")
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                              onPressed: (){},
+                              child: Text("Gerar nova chave")
+                          )
+                        ],
+                      )
                   ),
                   Expanded(
                     child: TextFormField(
@@ -156,7 +185,7 @@ class _HomeFormState extends State<HomeForm> {
                     ),
                   ),
                 ],
-              )
+              ) : SizedBox()
             ],
           ),
         )
