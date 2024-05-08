@@ -24,6 +24,7 @@ class _HomeFormState extends State<HomeForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
+              flex: 2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -41,9 +42,12 @@ class _HomeFormState extends State<HomeForm> {
                     controller: secretPhraseController,
                   ),
                   SizedBox(height: 10,),
-                  ElevatedButton(
-                      onPressed: (){},
-                      child: Text("Carregar ... ")
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                        onPressed: (){},
+                        child: Text("Carregar ... ")
+                    ),
                   ),
                   SizedBox(height: 10,),
                   TextFormField(
@@ -66,17 +70,29 @@ class _HomeFormState extends State<HomeForm> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  SizedBox(
+                    height: 40,
+                  ),
                   Text("Algoritmo"),
                   Icon(Icons.arrow_forward_rounded),
                   SizedBox(height: 200,),
                   ElevatedButton(
-                      onPressed: (){},
-                      child: Text("Gerar novo par de chaves")
+                    style: ButtonStyle(
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.zero,
+                                side: BorderSide(color: Colors.red)
+                            )
+                        )
+                    ),
+                    onPressed: (){},
+                    child: Text("Gerar novo par de chaves")
                   )
                 ],
               ),
             ),
             Expanded(
+              flex: 2,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -94,18 +110,30 @@ class _HomeFormState extends State<HomeForm> {
                       controller: secretPhraseController,
                     ),
                     SizedBox(height: 10,),
-                    Row(
-                        children: [
-                          ElevatedButton(
-                              onPressed: (){},
-                              child: Text("Download")
+                    SizedBox(
+                      child: Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Expanded(
+                                child: ElevatedButton(
+                                    onPressed: (){},
+                                    child: Text("Download")
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: ElevatedButton(
+                                    onPressed: (){},
+                                    child: Text("Copiar")
+                                ),
+                              ),
+                            ],
                           ),
-                          ElevatedButton(
-                              onPressed: (){},
-                              child: Text("Copiar")
-                          ),
-                        ],
                       ),
+                    ),
                     SizedBox(height: 10,),
                     TextFormField(
                       maxLines: 6,
