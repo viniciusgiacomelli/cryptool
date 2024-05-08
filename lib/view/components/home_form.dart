@@ -15,6 +15,16 @@ class _HomeFormState extends State<HomeForm> {
 
   final TextEditingController secretPhraseController = TextEditingController();
 
+  List<String> algorithms = <String>["RSA", "AES"];
+
+  late String _algorithm;
+
+  @override
+  void initState() {
+    _algorithm = algorithms[0];
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -27,6 +37,7 @@ class _HomeFormState extends State<HomeForm> {
                 children: [
                   Expanded(
                     child: TextFormField(
+                      maxLines: 6,
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Texto claro",
@@ -43,11 +54,30 @@ class _HomeFormState extends State<HomeForm> {
                       child: Column(
                         children: [
                           Text("algoritmo"),
+                          DropdownButton(
+                            iconSize: 40.0,
+                            iconEnabledColor: Colors.deepPurple,
+                            padding: EdgeInsets.symmetric(horizontal: 15.0),
+                            borderRadius: BorderRadius.circular(10),
+                            items: algorithms.map<DropdownMenuItem<String>>((String? brandValue) =>
+                                DropdownMenuItem<String>(
+                                    value:brandValue,
+                                    child: Text("$brandValue")
+                                )
+                            ).toList(),
+                            value: _algorithm,
+                            onChanged: (String? brandValue){
+                              setState(() {
+                                _algorithm = brandValue!;
+                              });
+                            },
+                          ),
                         ],
                       )
                   ),
                   Expanded(
                     child: TextFormField(
+                      maxLines: 6,
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Texto criptografado",
@@ -62,7 +92,7 @@ class _HomeFormState extends State<HomeForm> {
                   ),
                 ],
               ),
-              SizedBox(height: 16,),
+              SizedBox(height: 30,),
               Row(
                 children: [
                   Expanded(
@@ -89,14 +119,15 @@ class _HomeFormState extends State<HomeForm> {
                   ),
                 ],
               ),
-              SizedBox(height: 16,),
+              SizedBox(height: 30,),
               Row(
                 children: [
                   Expanded(
                     child: TextFormField(
+                      maxLines: 6,
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: "keyId",
+                          labelText: "Chave privada",
                           hintText: "Key ID:",
                           contentPadding: EdgeInsets.symmetric(
                               vertical: 12,
@@ -111,9 +142,10 @@ class _HomeFormState extends State<HomeForm> {
                   ),
                   Expanded(
                     child: TextFormField(
+                      maxLines: 6,
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: "keyId",
+                          labelText: "Chave pública",
                           hintText: "Key ID:",
                           contentPadding: EdgeInsets.symmetric(
                               vertical: 12,
