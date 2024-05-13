@@ -37,13 +37,13 @@ class _HomeFormState extends State<HomeForm> {
                     child: TextFormField(
                       maxLines: 6,
                       decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Texto claro",
-                          hintText: "Insira seu texto",
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 8
-                          )
+                        border: OutlineInputBorder(),
+                        labelText: "Texto claro",
+                        hintText: "Insira seu texto",
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 8
+                        )
                       ),
                       controller: secretPhraseController,
                     ),
@@ -89,13 +89,13 @@ class _HomeFormState extends State<HomeForm> {
                     child: TextFormField(
                       maxLines: 6,
                       decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Texto criptografado",
-                          hintText: "O texto criptografado aparecerá aqui",
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 8
-                          )
+                        border: OutlineInputBorder(),
+                        labelText: "Texto criptografado",
+                        hintText: "O texto criptografado aparecerá aqui",
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 8
+                        )
                       ),
                       controller: secretPhraseController,
                     ),
@@ -108,17 +108,17 @@ class _HomeFormState extends State<HomeForm> {
                   Expanded(
                     child: Row(
                       children: [
-                        ElevatedButton(
-                            onPressed: (){},
-                            child: Text("Procurar"),
-                            style: ButtonStyle(
-                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.zero,
-                                    )
-                                )
+                      ElevatedButton(
+                        onPressed: (){},
+                        child: Text("Procurar"),
+                        style: ButtonStyle(
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
                             )
-                        ),
+                          )
+                        )
+                      ),
                       ],
                     )
                   ),

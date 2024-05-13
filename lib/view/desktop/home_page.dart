@@ -1,7 +1,8 @@
-import 'package:cryptool/view/components/home_form.dart';
-import 'package:cryptool/view/components/home_header.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'components/home_form.dart';
+import 'components/home_header.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
