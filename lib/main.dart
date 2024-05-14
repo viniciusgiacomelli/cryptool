@@ -1,8 +1,12 @@
 import 'package:cryptool/view/desktop/home_page.dart';
 import 'package:cryptool/view/phone/phone_home_page.dart';
+import 'package:cryptool/viewmodel/services/crypto_service.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 void main() {
+  GetIt getIt = GetIt.instance;
+  getIt.registerLazySingleton<CryptoService>(() => CryptoService());
   runApp(const MyApp());
 }
 

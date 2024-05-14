@@ -32,6 +32,7 @@ dependencies:
     sdk: flutter
   fast_rsa: ^3.6.2
   crypto: ^3.0.3
+  get_it: ^7.7.0
 
 
   # The following adds the Cupertino Icons font to your application.
