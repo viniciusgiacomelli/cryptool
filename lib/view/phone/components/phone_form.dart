@@ -90,41 +90,6 @@ class _PhoneFormState extends State<PhoneForm> {
                 ),
                 controller: cleanTextController,
               ),
-              // Row(
-              //   children: [
-              //     Expanded(
-              //       child: TextFormField(
-              //         maxLines: 6,
-              //         decoration: const InputDecoration(
-              //             border: OutlineInputBorder(),
-              //             labelText: "Texto claro",
-              //             hintText: "Insira seu texto",
-              //             contentPadding: EdgeInsets.symmetric(
-              //                 vertical: 12,
-              //                 horizontal: 8
-              //             )
-              //         ),
-              //         controller: cleanTextController,
-              //       ),
-              //     ),
-              //     SizedBox(width: 8,),
-              //     Expanded(
-              //       child: TextFormField(
-              //         maxLines: 6,
-              //         decoration: const InputDecoration(
-              //             border: OutlineInputBorder(),
-              //             labelText: "Texto criptografado",
-              //             hintText: "Seu texto aparecerá aqui",
-              //             contentPadding: EdgeInsets.symmetric(
-              //                 vertical: 12,
-              //                 horizontal: 8
-              //             )
-              //         ),
-              //         controller: secretTextController,
-              //       ),
-              //     ),
-              //   ],
-              // ),
             ],
           ),
         ),
