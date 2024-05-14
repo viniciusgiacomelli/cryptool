@@ -21,6 +21,17 @@ class _PhoneFormState extends State<PhoneForm> {
 
   final _formKey = GlobalKey<FormState>();
 
+  Future<String> _getPublicKey() async {
+    if(publicKeyTextController.text == ""){
+      var cryptoService = getIt.get<CryptoService>();
+      KeyPair keyPair = await cryptoService.generateKeryPair();
+      publicKeyTextController.text = keyPair.publicKey;
+      privateKeyTextController.text = keyPair.privateKey;
+      return publicKeyTextController.text;
+    }
+    return publicKeyTextController.text;
+  }
+
   @override
   Widget build(BuildContext context) {
     var cryptoService = getIt.get<CryptoService>();
@@ -67,7 +78,13 @@ class _PhoneFormState extends State<PhoneForm> {
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
-                onPressed: (){},
+                onPressed: () async {
+                  var secretText = await cryptoService.cryptograph(
+                      message: cleanTextController.text,
+                      publicKey: await _getPublicKey()
+                  );
+                  secretTextController.text = secretText;
+                },
                 child: Text("Aplicar")
               ),
               SizedBox(height: 16.0),
