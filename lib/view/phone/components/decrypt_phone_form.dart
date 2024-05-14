@@ -20,7 +20,8 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
 
   final _formKey = GlobalKey<FormState>();
 
-  @override
+
+@override
   Widget build(BuildContext context) {
     var cryptoService = getIt.get<CryptoService>();
     return Form(

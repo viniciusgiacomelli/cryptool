@@ -32,6 +32,40 @@ class _PhoneFormState extends State<PhoneForm> {
     return publicKeyTextController.text;
   }
 
+  Future<void> _dialogBuilder(BuildContext context, String privacyType) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Chave $privacyType'),
+          content: privacyType == "pública" ?
+            Text(publicKeyTextController.text):
+            SingleChildScrollView(child: Text(privateKeyTextController.text)),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Copiar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Fechar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var cryptoService = getIt.get<CryptoService>();
@@ -98,6 +132,9 @@ class _PhoneFormState extends State<PhoneForm> {
               ),
               SizedBox(height: 16,),
               TextFormField(
+                onTap: (){
+                  _dialogBuilder(context, "pública");
+                },
                 readOnly: true,
                 maxLines: 6,
                 decoration: const InputDecoration(
@@ -112,6 +149,9 @@ class _PhoneFormState extends State<PhoneForm> {
               ),
               SizedBox(height: 8,),
               TextFormField(
+                onTap: (){
+                  _dialogBuilder(context, "privada");
+                },
                 readOnly: true,
                 maxLines: 6,
                 decoration: const InputDecoration(
