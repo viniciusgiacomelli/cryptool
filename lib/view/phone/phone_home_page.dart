@@ -40,7 +40,7 @@ class _PhoneHomePageState extends State<PhoneHomePage> {
           child: <Widget>[
             PhoneForm(),
             DecryptPhoneForm()
-      ][currentPageIndex]
+          ][currentPageIndex]
       )
     );
   }

@@ -21,6 +21,16 @@ class _PhoneFormState extends State<PhoneForm> {
 
   final _formKey = GlobalKey<FormState>();
 
+  List<String> algorithms = <String>["RSA", "AES", "MD5"];
+  late String _algorithm;
+
+  @override
+  void initState() {
+    _algorithm = algorithms[0];
+    super.initState();
+  }
+
+
   Future<String> _getPublicKey() async {
     if(publicKeyTextController.text == ""){
       var cryptoService = getIt.get<CryptoService>();
@@ -111,15 +121,45 @@ class _PhoneFormState extends State<PhoneForm> {
                 ],
               ),
               SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () async {
-                  var secretText = await cryptoService.cryptograph(
-                      message: cleanTextController.text,
-                      publicKey: await _getPublicKey()
-                  );
-                  secretTextController.text = secretText;
-                },
-                child: Text("Aplicar")
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: DropdownButton(
+                      iconSize: 40.0,
+                      isExpanded: true,
+                      isDense: true,
+                      iconEnabledColor: Colors.deepPurple,
+                      padding: EdgeInsets.symmetric(horizontal: 15.0),
+                      borderRadius: BorderRadius.circular(10),
+                      items: algorithms.map<DropdownMenuItem<String>>((String? brandValue) =>
+                          DropdownMenuItem<String>(
+                              value:brandValue,
+                              child: Text("$brandValue")
+                          )
+                      ).toList(),
+                      value: _algorithm,
+                      onChanged: (String? brandValue){
+                        setState(() {
+                          _algorithm = brandValue!;
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox( width: 12,),
+                  Expanded(
+                    child: ElevatedButton(
+                        onPressed: () async {
+                          var secretText = await cryptoService.cryptograph(
+                              message: cleanTextController.text,
+                              publicKey: await _getPublicKey()
+                          );
+                          secretTextController.text = secretText;
+                        },
+                        child: Text("Aplicar")
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
