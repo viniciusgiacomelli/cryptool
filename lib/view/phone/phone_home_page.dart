@@ -1,6 +1,7 @@
 import 'package:cryptool/view/phone/components/decrypt_phone_form.dart';
 import 'package:flutter/material.dart';
 
+import '../desktop/components/home_header.dart';
 import 'components/phone_form.dart';
 
 class PhoneHomePage extends StatefulWidget {
@@ -37,10 +38,19 @@ class _PhoneHomePageState extends State<PhoneHomePage> {
         ],
       ),
       body: SingleChildScrollView(
-          child: <Widget>[
-            PhoneForm(),
-            DecryptPhoneForm()
-          ][currentPageIndex]
+          child: Column(
+            children: [
+              HomeHeader(),
+              <Widget>[
+                PhoneForm(),
+                DecryptPhoneForm()
+              ][currentPageIndex]
+            ],
+          )
+          // child: <Widget>[
+          //   PhoneForm(),
+          //   DecryptPhoneForm()
+          // ][currentPageIndex]
       )
     );
   }
