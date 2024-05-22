@@ -1,4 +1,7 @@
+import 'package:cryptool/viewmodel/services/crypto_service.dart';
+import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class HomeForm extends StatefulWidget {
   const HomeForm({super.key});
@@ -8,10 +11,14 @@ class HomeForm extends StatefulWidget {
 }
 
 class _HomeFormState extends State<HomeForm> {
+  GetIt getIt = GetIt.instance;
+
+  final TextEditingController cleanTextController = TextEditingController();
+  final TextEditingController secretTextController = TextEditingController();
+  final TextEditingController publicKeyTextController = TextEditingController();
+  final TextEditingController privateKeyTextController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-
-  final TextEditingController secretPhraseController = TextEditingController();
 
   List<String> algorithms = <String>["RSA", "AES", "MD5"];
 
@@ -25,6 +32,7 @@ class _HomeFormState extends State<HomeForm> {
 
   @override
   Widget build(BuildContext context) {
+    var cryptoService = getIt.get<CryptoService>();
     return Form(
         key: _formKey,
         child: Padding(
@@ -45,7 +53,7 @@ class _HomeFormState extends State<HomeForm> {
                           horizontal: 8
                         )
                       ),
-                      controller: secretPhraseController,
+                      controller: cleanTextController,
                     ),
                   ),
                   Expanded(
@@ -97,7 +105,7 @@ class _HomeFormState extends State<HomeForm> {
                           horizontal: 8
                         )
                       ),
-                      controller: secretPhraseController,
+                      controller: secretTextController,
                     ),
                   ),
                 ],
@@ -155,19 +163,23 @@ class _HomeFormState extends State<HomeForm> {
                               horizontal: 8
                           )
                       ),
-                      controller: secretPhraseController,
+                      controller: privateKeyTextController,
                     ),
                   ),
                   Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                              onPressed: (){},
-                              child: Text("Gerar nova chave")
-                          )
-                        ],
-                      )
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          child: Text("Gerar nova chave"),
+                          onPressed: () async {
+                            KeyPair keyPair = await cryptoService.generateKeryPair();
+                            publicKeyTextController.text = keyPair.publicKey;
+                            privateKeyTextController.text = keyPair.privateKey;
+                          },
+                        )
+                      ],
+                    )
                   ),
                   Expanded(
                     child: TextFormField(
@@ -177,11 +189,11 @@ class _HomeFormState extends State<HomeForm> {
                           labelText: "Chave pública",
                           hintText: "Key ID:",
                           contentPadding: EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 8
+                            vertical: 12,
+                            horizontal: 8
                           )
                       ),
-                      controller: secretPhraseController,
+                      controller: publicKeyTextController,
                     ),
                   ),
                 ],
