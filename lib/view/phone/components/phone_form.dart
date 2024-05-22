@@ -1,7 +1,6 @@
 import 'package:cryptool/viewmodel/services/crypto_service.dart';
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 
 class PhoneForm extends StatefulWidget {
@@ -29,7 +28,6 @@ class _PhoneFormState extends State<PhoneForm> {
     _algorithm = algorithms[0];
     super.initState();
   }
-
 
   Future<String> _getPublicKey() async {
     if(publicKeyTextController.text == ""){

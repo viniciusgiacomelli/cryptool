@@ -30,6 +30,51 @@ class _HomeFormState extends State<HomeForm> {
     super.initState();
   }
 
+  Future<String> _getPublicKey() async {
+    if(publicKeyTextController.text == ""){
+      var cryptoService = getIt.get<CryptoService>();
+      KeyPair keyPair = await cryptoService.generateKeryPair();
+      publicKeyTextController.text = keyPair.publicKey;
+      privateKeyTextController.text = keyPair.privateKey;
+      return publicKeyTextController.text;
+    }
+    return publicKeyTextController.text;
+  }
+
+  Future<void> _dialogBuilder(BuildContext context, String privacyType) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Chave $privacyType'),
+          content: privacyType == "pública" ?
+          Text(publicKeyTextController.text):
+          SingleChildScrollView(child: Text(privateKeyTextController.text)),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Copiar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Fechar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var cryptoService = getIt.get<CryptoService>();
@@ -67,10 +112,10 @@ class _HomeFormState extends State<HomeForm> {
                             padding: EdgeInsets.symmetric(horizontal: 15.0),
                             borderRadius: BorderRadius.circular(10),
                             items: algorithms.map<DropdownMenuItem<String>>((String? brandValue) =>
-                                DropdownMenuItem<String>(
-                                    value:brandValue,
-                                    child: Text("$brandValue")
-                                )
+                              DropdownMenuItem<String>(
+                                value:brandValue,
+                                child: Text("$brandValue")
+                              )
                             ).toList(),
                             value: _algorithm,
                             onChanged: (String? brandValue){
@@ -80,7 +125,13 @@ class _HomeFormState extends State<HomeForm> {
                             },
                           ),
                           ElevatedButton(
-                            onPressed: (){},
+                            onPressed: () async {
+                              var secretText = await cryptoService.cryptograph(
+                                  message: cleanTextController.text,
+                                  publicKey: await _getPublicKey()
+                              );
+                              secretTextController.text = secretText;
+                            },
                             child: Text("Aplicar"),
                             style: ButtonStyle(
                               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -116,27 +167,27 @@ class _HomeFormState extends State<HomeForm> {
                   Expanded(
                     child: Row(
                       children: [
-                      ElevatedButton(
-                        onPressed: (){},
-                        child: Text("Procurar"),
-                        style: ButtonStyle(
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.zero,
+                        ElevatedButton(
+                          onPressed: (){},
+                          child: Text("Procurar"),
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.zero,
+                              )
                             )
                           )
-                        )
-                      ),
+                        ),
                       ],
                     )
                   ),
                   Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text("algoritmo"),
-                        ],
-                      )
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text("algoritmo"),
+                      ],
+                    )
                   ),
                   Expanded(
                     child: Row(
@@ -153,15 +204,19 @@ class _HomeFormState extends State<HomeForm> {
                 children: [
                   Expanded(
                     child: TextFormField(
+                      onTap: (){
+                        _dialogBuilder(context, "privada");
+                      },
+                      readOnly: true,
                       maxLines: 6,
                       decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Chave privada",
-                          hintText: "Key ID:",
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 8
-                          )
+                        border: OutlineInputBorder(),
+                        labelText: "Chave privada",
+                        hintText: "Key ID:",
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 8
+                        )
                       ),
                       controller: privateKeyTextController,
                     ),
@@ -183,15 +238,19 @@ class _HomeFormState extends State<HomeForm> {
                   ),
                   Expanded(
                     child: TextFormField(
+                      onTap: (){
+                        _dialogBuilder(context, "pública");
+                      },
+                      readOnly: true,
                       maxLines: 6,
                       decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Chave pública",
-                          hintText: "Key ID:",
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 8
-                          )
+                        border: OutlineInputBorder(),
+                        labelText: "Chave pública",
+                        hintText: "Key ID:",
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 8
+                        )
                       ),
                       controller: publicKeyTextController,
                     ),
