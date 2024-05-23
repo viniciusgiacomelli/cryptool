@@ -259,7 +259,14 @@ class _PhoneFormState extends State<PhoneForm> {
                                 Text("Clique para abrir", style: TextStyle(fontSize: 10),),
                                 SizedBox(height: 6,),
                                 ElevatedButton(
-                                    onPressed: _generatedKeys ? (){} : null,
+                                    onPressed: _generatedKeys ?
+                                      (){
+                                        _cryptoService.saveKey(
+                                            key: publicKeyTextController.text,
+                                          type: "public"
+                                        );
+                                      } :
+                                      null,
                                     child: Text("Baixar")
                                 )
                               ],
@@ -298,7 +305,14 @@ class _PhoneFormState extends State<PhoneForm> {
                                 Text("Clique para abrir", style: TextStyle(fontSize: 10),),
                                 SizedBox(height: 6,),
                                 ElevatedButton(
-                                    onPressed: _generatedKeys ? (){} : null,
+                                    onPressed: _generatedKeys ?
+                                        (){
+                                          _cryptoService.saveKey(
+                                              key: privateKeyTextController.text,
+                                              type: "private"
+                                          );
+                                        } :
+                                    null,
                                     child: Text("Baixar")
                                 )
                               ],

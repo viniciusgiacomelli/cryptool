@@ -1,4 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:fast_rsa/fast_rsa.dart';
+import 'package:flutter/foundation.dart';
+
+import 'web_downloader_service.dart';
 
 class CryptoService {
 
@@ -33,6 +39,18 @@ class CryptoService {
     return message;
 
   }
+
+  Future<bool> saveKey({required String key, required String type}) async {
+    //var file = File("$key.pub");
+    if(kIsWeb){
+      var bytes = utf8.encode(key);
+      WebDownloaderService.download(bytes, downloadName: "$type.txt");
+    }
+
+    return false;
+  }
+
+
 
 
 }
