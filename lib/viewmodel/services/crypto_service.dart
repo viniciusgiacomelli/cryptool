@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:fast_rsa/fast_rsa.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 
 import 'web_downloader_service.dart';
@@ -50,7 +51,17 @@ class CryptoService {
     return false;
   }
 
+  Future<String?> uploadKey() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
 
+    if (result != null) {
+      Uint8List? unit8List = result.files.single.bytes;
+      String string = String.fromCharCodes(unit8List!);
+      return string;
+    } else {
+      return null;
+    }
+  }
 
 
 }

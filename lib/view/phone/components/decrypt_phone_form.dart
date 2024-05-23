@@ -13,6 +13,7 @@ class DecryptPhoneForm extends StatefulWidget {
 
 class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
   GetIt getIt = GetIt.instance;
+  late CryptoService _cryptoService;
 
   final TextEditingController cleanTextController = TextEditingController();
   final TextEditingController secretTextController = TextEditingController();
@@ -20,6 +21,12 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
 
   final _formKey = GlobalKey<FormState>();
   bool _privateKey = false;
+
+  @override
+  void initState() {
+    _cryptoService = getIt.get<CryptoService>();
+    super.initState();
+  }
 
   Future<void> _dialogBuilder(BuildContext context, String privacyType) {
     return showDialog<void>(
@@ -55,7 +62,6 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
 
 @override
   Widget build(BuildContext context) {
-    var cryptoService = getIt.get<CryptoService>();
     return Form(
         key: _formKey,
         child: Padding(
@@ -141,8 +147,13 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                   ElevatedButton(
                     child: Text("Carregar ... "),
                     onPressed: () async {
-                      KeyPair keyPair = await cryptoService.generateKeryPair();
-                      privateKeyTextController.text = keyPair.privateKey;
+                      String? publicKey = await _cryptoService.uploadKey();
+                      if(publicKey != null){
+                        privateKeyTextController.text = publicKey;
+                        setState(() {
+                          _privateKey = true;
+                        });
+                      }
                     },
                   )
                 ],
