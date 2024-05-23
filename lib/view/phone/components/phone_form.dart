@@ -22,7 +22,8 @@ class _PhoneFormState extends State<PhoneForm> {
 
   List<String> algorithms = <String>["RSA", "AES"];
   late String _algorithm;
-  bool _generatedKeys = false;
+  bool _publicKey = false;
+  bool _privateKey = false;
   bool _generating = false;
 
   @override
@@ -37,11 +38,12 @@ class _PhoneFormState extends State<PhoneForm> {
       _generating = true;
     });
     KeyPair keyPair = await _cryptoService.generateKeryPair();
-    publicKeyTextController.text = keyPair.publicKey;
-    privateKeyTextController.text = keyPair.privateKey;
     setState(() {
+      privateKeyTextController.text = keyPair.privateKey;
+      publicKeyTextController.text = keyPair.publicKey;
+      _privateKey = true;
+      _publicKey = true;
       _generating = false;
-      _generatedKeys = true;
     });
     return null;
   }
@@ -68,11 +70,13 @@ class _PhoneFormState extends State<PhoneForm> {
     return false;
   }
 
-  Future<void> _dialogBuilder(
-      BuildContext context,
-      String title,
-      String content
-    ){
+  Future<void> _dialogBuilder({
+    required BuildContext context,
+    required String title,
+    required String content,
+    required bool activeDownload,
+    required String fileName,
+  }){
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -82,14 +86,17 @@ class _PhoneFormState extends State<PhoneForm> {
               child: Text(content),
           ),
           actions: <Widget>[
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Copiar'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+            ElevatedButton(
+                onPressed: activeDownload ?
+                    (){
+                  _cryptoService.save(
+                      content: content,
+                      type: fileName
+                  );
+                  Navigator.of(context).pop();
+                } :
+                null,
+                child: Text("Baixar")
             ),
             TextButton(
               style: TextButton.styleFrom(
@@ -136,9 +143,11 @@ class _PhoneFormState extends State<PhoneForm> {
                     child: TextFormField(
                       onTap: (){
                         _dialogBuilder(
-                          context,
-                          _algorithm == "RSA" ? "Texto criptografado" : "Hash",
-                          secretTextController.text
+                          context: context,
+                          title: _algorithm == "RSA" ? "Texto criptografado" : "Hash",
+                          content: secretTextController.text,
+                          activeDownload: secretTextController.text != "",
+                          fileName: _algorithm == "RSA" ? "secret_text" : "hash"
                         );
                       },
                       readOnly: true,
@@ -229,9 +238,11 @@ class _PhoneFormState extends State<PhoneForm> {
                       GestureDetector(
                           onTap: (){
                             _dialogBuilder(
-                              context,
-                              "Chave pública",
-                              publicKeyTextController.text
+                              context: context,
+                              title: "Chave pública",
+                              content: publicKeyTextController.text,
+                              activeDownload: _publicKey,
+                              fileName: "public_key"
                             );
                           },
                           child: Container(
@@ -250,24 +261,25 @@ class _PhoneFormState extends State<PhoneForm> {
                                     ),
                                   ),
                                   child: Center(
-                                    child: _generatedKeys ?
+                                    child: _publicKey ?
                                     Icon( Icons.lock, size: 80,) :
-                                    Text("Gerar chave"),
+                                    Text("Chave vazia"),
                                     // Text("Gerar chave"),
                                   ),
                                 ),
                                 Text("Clique para abrir", style: TextStyle(fontSize: 10),),
                                 SizedBox(height: 6,),
                                 ElevatedButton(
-                                    onPressed: _generatedKeys ?
-                                      (){
-                                        _cryptoService.saveKey(
-                                            key: publicKeyTextController.text,
-                                          type: "public"
-                                        );
-                                      } :
-                                      null,
-                                    child: Text("Baixar")
+                                  child: Text("Carregar ... "),
+                                  onPressed: () async {
+                                    String? publicKey = await _cryptoService.uploadKey();
+                                    if(publicKey != null){
+                                      setState(() {
+                                        publicKeyTextController.text = publicKey;
+                                        _publicKey = true;
+                                      });
+                                    }
+                                  },
                                 )
                               ],
                             ),
@@ -276,9 +288,11 @@ class _PhoneFormState extends State<PhoneForm> {
                       GestureDetector(
                           onTap: (){
                             _dialogBuilder(
-                                context,
-                                "Chave privada",
-                              privateKeyTextController.text
+                                context: context,
+                                title: "Chave privada",
+                              content: privateKeyTextController.text,
+                              activeDownload: _privateKey,
+                              fileName: "private_key"
                             );
                           },
                           child: Container(
@@ -297,7 +311,7 @@ class _PhoneFormState extends State<PhoneForm> {
                                     ),
                                   ),
                                   child: Center(
-                                    child: _generatedKeys ?
+                                    child: _privateKey ?
                                     Icon( Icons.key_rounded, size: 80,) :
                                     Text("Gerar chave"),
                                   ),
@@ -305,15 +319,16 @@ class _PhoneFormState extends State<PhoneForm> {
                                 Text("Clique para abrir", style: TextStyle(fontSize: 10),),
                                 SizedBox(height: 6,),
                                 ElevatedButton(
-                                    onPressed: _generatedKeys ?
-                                        (){
-                                          _cryptoService.saveKey(
-                                              key: privateKeyTextController.text,
-                                              type: "private"
-                                          );
-                                        } :
-                                    null,
-                                    child: Text("Baixar")
+                                  child: Text("Carregar ... "),
+                                  onPressed: () async {
+                                    String? privateKey = await _cryptoService.uploadKey();
+                                    if(privateKey != null){
+                                      setState(() {
+                                        privateKeyTextController.text = privateKey;
+                                        _privateKey = true;
+                                      });
+                                    }
+                                  },
                                 )
                               ],
                             ),

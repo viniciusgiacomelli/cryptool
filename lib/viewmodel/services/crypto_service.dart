@@ -38,13 +38,12 @@ class CryptoService {
 
     var message = await RSA.decryptPKCS1v15(secret, privateKey);
     return message;
-
   }
 
-  Future<bool> saveKey({required String key, required String type}) async {
+  Future<bool> save({required String content, required String type}) async {
     //var file = File("$key.pub");
     if(kIsWeb){
-      var bytes = utf8.encode(key);
+      var bytes = utf8.encode(content);
       WebDownloaderService.download(bytes, downloadName: "$type.txt");
     }
 

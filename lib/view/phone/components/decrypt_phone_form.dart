@@ -15,8 +15,8 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
   GetIt getIt = GetIt.instance;
   late CryptoService _cryptoService;
 
-  final TextEditingController cleanTextController = TextEditingController();
   final TextEditingController secretTextController = TextEditingController();
+  final TextEditingController cleanTextController = TextEditingController();
   final TextEditingController privateKeyTextController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
@@ -28,13 +28,17 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
     super.initState();
   }
 
-  Future<void> _dialogBuilder(BuildContext context, String privacyType) {
+  Future<void> _dialogBuilder({
+    required BuildContext context,
+    required String title,
+    required String content,
+  }) {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Chave $privacyType'),
-          content: SingleChildScrollView(child: Text(privateKeyTextController.text)),
+          title: Text(title),
+          content: SingleChildScrollView(child: Text(content)),
           actions: <Widget>[
             TextButton(
               style: TextButton.styleFrom(
@@ -60,6 +64,30 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
     );
   }
 
+  _handleDecrypt() async {
+    if(!_privateKey){
+      _dialogBuilder(
+          context: context,
+          title: "Atenção",
+          content: "Carregue uma chave privada"
+      );
+    } else {
+      var cleanText = await _cryptoService.decryptPKCS(
+          secret: secretTextController.text,
+          privateKey: privateKeyTextController.text
+      );
+      if(cleanText != null){
+        cleanTextController.text = cleanText;
+      } else{
+        _dialogBuilder(
+            context: context,
+            title: "Erro",
+            content: "Erro ao descriptogarafar"
+        );
+      }
+    }
+  }
+
 @override
   Widget build(BuildContext context) {
     return Form(
@@ -83,7 +111,7 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                           horizontal: 8
                         )
                       ),
-                      controller: cleanTextController,
+                      controller: secretTextController,
                     ),
                   ),
                   SizedBox(width: 8,),
@@ -100,14 +128,14 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                           horizontal: 8
                         )
                       ),
-                      controller: secretTextController,
+                      controller: cleanTextController,
                     ),
                   ),
                 ],
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
-                onPressed: (){},
+                onPressed: (){ _handleDecrypt(); },
                 child: Text("Descriptografar")
               ),
               SizedBox(height: 8,),
@@ -116,7 +144,11 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                 children: [
                   GestureDetector(
                       onTap: (){
-                        _dialogBuilder(context, "privada");
+                        _dialogBuilder(
+                            context: context,
+                            title: "Chave privada",
+                          content: privateKeyTextController.text
+                        );
                       },
                       child: Container(
                         width: 150,
@@ -149,8 +181,8 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                     onPressed: () async {
                       String? publicKey = await _cryptoService.uploadKey();
                       if(publicKey != null){
-                        privateKeyTextController.text = publicKey;
                         setState(() {
+                          privateKeyTextController.text = publicKey;
                           _privateKey = true;
                         });
                       }
