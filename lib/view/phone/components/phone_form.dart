@@ -57,16 +57,27 @@ class _PhoneFormState extends State<PhoneForm> {
   }
 
   Future<bool> _applyCriptography() async {
-    var publicKey = await _getPublicKey();
-    var secret = await _cryptoService.cryptograph(
-        algorithm: _algorithm,
-        message: cleanTextController.text,
-        publicKey: _algorithm == "RSA" ? publicKey : null
-    );
-    if(secret != null){
-      secretTextController.text = secret;
-      return true;
+    if(cleanTextController.text == ""){
+      _dialogBuilder(
+          context: context,
+          title: "Atenção",
+          content: "Escreva um texto para ser criptografado",
+          activeDownload: false,
+          fileName: ""
+      );
+    } else {
+      var publicKey = await _getPublicKey();
+      var secret = await _cryptoService.cryptograph(
+          algorithm: _algorithm,
+          message: cleanTextController.text,
+          publicKey: _algorithm == "RSA" ? publicKey : null
+      );
+      if(secret != null){
+        secretTextController.text = secret;
+        return true;
+      }
     }
+
     return false;
   }
 
@@ -86,17 +97,16 @@ class _PhoneFormState extends State<PhoneForm> {
               child: Text(content),
           ),
           actions: <Widget>[
-            ElevatedButton(
-                onPressed: activeDownload ?
-                    (){
+            ElevatedButton.icon(
+              icon: Icon(Icons.download),
+                label: Text("Baixar"),
+                onPressed: activeDownload ?  (){
                   _cryptoService.save(
                       content: content,
                       type: fileName
                   );
                   Navigator.of(context).pop();
-                } :
-                null,
-                child: Text("Baixar")
+                } : null,
             ),
             TextButton(
               style: TextButton.styleFrom(
@@ -198,7 +208,9 @@ class _PhoneFormState extends State<PhoneForm> {
                   Expanded(
                     child: ElevatedButton(
                         onPressed: () async {
-                          var applied = await _applyCriptography();
+                          if(_formKey.currentState!.validate()){
+                            var applied = await _applyCriptography();
+                          }
                         },
                         child: Text("Aplicar")
                     ),
@@ -240,7 +252,7 @@ class _PhoneFormState extends State<PhoneForm> {
                             _dialogBuilder(
                               context: context,
                               title: "Chave pública",
-                              content: publicKeyTextController.text,
+                              content: _publicKey ? publicKeyTextController.text : "Carregue ou gere uma chave pública",
                               activeDownload: _publicKey,
                               fileName: "public_key"
                             );
@@ -263,11 +275,11 @@ class _PhoneFormState extends State<PhoneForm> {
                                   child: Center(
                                     child: _publicKey ?
                                     Icon( Icons.lock, size: 80,) :
-                                    Text("Chave vazia"),
+                                    Icon( Icons.lock, size: 80, color: Colors.black12,),
                                     // Text("Gerar chave"),
                                   ),
                                 ),
-                                Text("Clique para abrir", style: TextStyle(fontSize: 10),),
+                                Text("Clique para abrir / carregar", style: TextStyle(fontSize: 10),),
                                 SizedBox(height: 6,),
                                 ElevatedButton(
                                   child: Text("Carregar ... "),
@@ -289,8 +301,8 @@ class _PhoneFormState extends State<PhoneForm> {
                           onTap: (){
                             _dialogBuilder(
                                 context: context,
-                                title: "Chave privada",
-                              content: privateKeyTextController.text,
+                                title: _privateKey ? "Chave privada" : "Atenção",
+                              content: _privateKey ? privateKeyTextController.text : "Carregue ou gere uma chave privada",
                               activeDownload: _privateKey,
                               fileName: "private_key"
                             );
@@ -313,13 +325,14 @@ class _PhoneFormState extends State<PhoneForm> {
                                   child: Center(
                                     child: _privateKey ?
                                     Icon( Icons.key_rounded, size: 80,) :
-                                    Text("Gerar chave"),
+                                    Icon( Icons.key_rounded, size: 80, color: Colors.black12,),
                                   ),
                                 ),
-                                Text("Clique para abrir", style: TextStyle(fontSize: 10),),
+                                Text("Clique para abrir / carregar", style: TextStyle(fontSize: 10),),
                                 SizedBox(height: 6,),
-                                ElevatedButton(
-                                  child: Text("Carregar ... "),
+                                ElevatedButton.icon(
+                                  icon: Icon( Icons.upload, size: 20,),
+                                  label: Text("Carregar"),
                                   onPressed: () async {
                                     String? privateKey = await _cryptoService.uploadKey();
                                     if(privateKey != null){

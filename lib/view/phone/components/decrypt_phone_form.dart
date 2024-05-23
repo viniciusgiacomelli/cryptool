@@ -1,5 +1,6 @@
 import 'package:cryptool/viewmodel/services/crypto_service.dart';
 import 'package:fast_rsa/fast_rsa.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
@@ -40,14 +41,17 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
           title: Text(title),
           content: SingleChildScrollView(child: Text(content)),
           actions: <Widget>[
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
+            Visibility(
+              visible: _privateKey,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  textStyle: Theme.of(context).textTheme.labelLarge,
+                ),
+                child: const Text('Copiar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
               ),
-              child: const Text('Copiar'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
             ),
             TextButton(
               style: TextButton.styleFrom(
@@ -65,11 +69,18 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
   }
 
   _handleDecrypt() async {
+    String? errors;
+    if(secretTextController.text == ""){
+      errors = "- Cole o texto secreto para decrifrar \n";
+    }
     if(!_privateKey){
+      errors = "$errors - Carregue uma chave privada";
+    }
+    if(errors != null){
       _dialogBuilder(
           context: context,
           title: "Atenção",
-          content: "Carregue uma chave privada"
+          content: errors
       );
     } else {
       var cleanText = await _cryptoService.decryptPKCS(
@@ -105,7 +116,7 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: "Texto criptografado",
-                        hintText: "Insira seu texto",
+                        hintText: "Insira o texto secreto",
                         contentPadding: EdgeInsets.symmetric(
                           vertical: 12,
                           horizontal: 8
@@ -135,7 +146,11 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
-                onPressed: (){ _handleDecrypt(); },
+                onPressed: (){
+                  if(_formKey.currentState!.validate()){
+                    _handleDecrypt();
+                  }
+                },
                 child: Text("Descriptografar")
               ),
               SizedBox(height: 8,),
@@ -146,7 +161,7 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                       onTap: (){
                         _dialogBuilder(
                             context: context,
-                            title: "Chave privada",
+                            title: _privateKey ? "Chave privada" : "Carregue uma chave",
                           content: privateKeyTextController.text
                         );
                       },
@@ -168,10 +183,10 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                               child: Center(
                                 child: _privateKey ?
                                 Icon( Icons.key_rounded, size: 80,) :
-                                Text("Carregar chave"),
+                                Icon( Icons.key_rounded, size: 80, color: Colors.black26),
                               ),
                             ),
-                            Text("Clique para abrir", style: TextStyle(fontSize: 10),),
+                            Text( _privateKey ? "Clique para abrir" : "Carregue uma chave", style: TextStyle(fontSize: 10),),
                           ],
                         ),
                       )
