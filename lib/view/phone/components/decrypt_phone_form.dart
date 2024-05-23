@@ -19,6 +19,7 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
   final TextEditingController privateKeyTextController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+  bool _privateKey = false;
 
   Future<void> _dialogBuilder(BuildContext context, String privacyType) {
     return showDialog<void>(
@@ -60,6 +61,7 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
         child: Padding(
           padding:  EdgeInsets.all(16.0),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Row(
                 children: [
@@ -103,34 +105,48 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                 child: Text("Descriptografar")
               ),
               SizedBox(height: 8,),
-              TextFormField(
-                onTap: (){
-                  _dialogBuilder(context, "privada");
-                },
-                readOnly: true,
-                maxLines: 6,
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "chave privada",
-                    contentPadding: EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 8
-                    )
-                ),
-                controller: privateKeyTextController,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                      onTap: (){
+                        _dialogBuilder(context, "privada");
+                      },
+                      child: Container(
+                        width: 150,
+                        height: 150,
+                        child: Column(
+                          children: [
+                            Text("Chave privada"),
+                            Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.grey,
+                                    width: 2.0
+                                ),
+                              ),
+                              child: Center(
+                                child: _privateKey ?
+                                Icon( Icons.key_rounded, size: 80,) :
+                                Text("Carregar chave"),
+                              ),
+                            ),
+                            Text("Clique para abrir", style: TextStyle(fontSize: 10),),
+                          ],
+                        ),
+                      )
+                  ),
+                  ElevatedButton(
+                    child: Text("Carregar ... "),
+                    onPressed: () async {
+                      KeyPair keyPair = await cryptoService.generateKeryPair();
+                      privateKeyTextController.text = keyPair.privateKey;
+                    },
+                  )
+                ],
               ),
-              SizedBox(height: 16.0),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  child: Text("Carregar ... "),
-                  onPressed: () async {
-                    KeyPair keyPair = await cryptoService.generateKeryPair();
-                    privateKeyTextController.text = keyPair.privateKey;
-                  },
-                ),
-              )
-
             ],
           ),
         ),

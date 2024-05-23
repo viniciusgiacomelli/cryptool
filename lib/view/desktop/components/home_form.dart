@@ -221,25 +221,6 @@ class _HomeFormState extends State<HomeForm> {
                       ),
                     ),
                   ),
-                  // Expanded(
-                  //   child: TextFormField(
-                  //     onTap: (){
-                  //       _dialogBuilder(context, "privada");
-                  //     },
-                  //     readOnly: true,
-                  //     maxLines: 6,
-                  //     decoration: const InputDecoration(
-                  //       border: OutlineInputBorder(),
-                  //       labelText: "Chave privada",
-                  //       hintText: "Key ID:",
-                  //       contentPadding: EdgeInsets.symmetric(
-                  //         vertical: 12,
-                  //         horizontal: 8
-                  //       )
-                  //     ),
-                  //     controller: privateKeyTextController,
-                  //   ),
-                  // ),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,

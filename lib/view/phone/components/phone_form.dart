@@ -180,7 +180,7 @@ class _PhoneFormState extends State<PhoneForm> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Gerar par de chaves"),
+                    Text("Gerar novo par de chaves"),
                     SizedBox( width: 8,),
                     _generating ?
                         SizedBox(
@@ -202,42 +202,12 @@ class _PhoneFormState extends State<PhoneForm> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   GestureDetector(
-                    onTap: (){
-                      _dialogBuilder(context, "privada");
-                    },
-                    child: Container(
-                      width: 150,
-                      height: 150,
-                      child: Column(
-                        children: [
-                          Text("Chave privada"),
-                          Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.grey,
-                                  width: 2.0
-                              ),
-                            ),
-                            child: Center(
-                              child: _generatedKeys ?
-                              Icon( Icons.key, size: 80,) :
-                              Text("Gerar chave"),
-                            ),
-                          ),
-                          Text("Clique para abrir", style: TextStyle(fontSize: 10),),
-                        ],
-                      ),
-                    )
-                  ),
-                  GestureDetector(
                       onTap: (){
                         _dialogBuilder(context, "pública");
                       },
                       child: Container(
                         width: 150,
-                        height: 150,
+                        height: 250,
                         child: Column(
                           children: [
                             Text("Chave publica"),
@@ -258,6 +228,46 @@ class _PhoneFormState extends State<PhoneForm> {
                               ),
                             ),
                             Text("Clique para abrir", style: TextStyle(fontSize: 10),),
+                            SizedBox(height: 6,),
+                            ElevatedButton(
+                                onPressed: _generatedKeys ? (){} : null,
+                                child: Text("Baixar")
+                            )
+                          ],
+                        ),
+                      )
+                  ),
+                  GestureDetector(
+                      onTap: (){
+                        _dialogBuilder(context, "privada");
+                      },
+                      child: Container(
+                        width: 150,
+                        height: 250,
+                        child: Column(
+                          children: [
+                            Text("Chave privada"),
+                            Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.grey,
+                                    width: 2.0
+                                ),
+                              ),
+                              child: Center(
+                                child: _generatedKeys ?
+                                Icon( Icons.key_rounded, size: 80,) :
+                                Text("Gerar chave"),
+                              ),
+                            ),
+                            Text("Clique para abrir", style: TextStyle(fontSize: 10),),
+                            SizedBox(height: 6,),
+                            ElevatedButton(
+                                onPressed: _generatedKeys ? (){} : null,
+                                child: Text("Baixar")
+                            )
                           ],
                         ),
                       )
