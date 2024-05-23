@@ -20,7 +20,7 @@ class _HomeFormState extends State<HomeForm> {
 
   final _formKey = GlobalKey<FormState>();
 
-  List<String> algorithms = <String>["RSA", "AES", "MD5"];
+  List<String> algorithms = <String>["RSA", "AES"];
 
   late String _algorithm;
 
@@ -127,10 +127,11 @@ class _HomeFormState extends State<HomeForm> {
                           ElevatedButton(
                             onPressed: () async {
                               var secretText = await cryptoService.cryptograph(
-                                  message: cleanTextController.text,
-                                  publicKey: await _getPublicKey()
+                                algorithm: _algorithm,
+                                message: cleanTextController.text,
+                                publicKey: await _getPublicKey()
                               );
-                              secretTextController.text = secretText;
+                              secretTextController.text = secretText!;
                             },
                             child: Text("Aplicar"),
                             style: ButtonStyle(
@@ -202,25 +203,43 @@ class _HomeFormState extends State<HomeForm> {
               SizedBox(height: 30,),
               _algorithm == "RSA" ?  Row(
                 children: [
-                  Expanded(
-                    child: TextFormField(
-                      onTap: (){
-                        _dialogBuilder(context, "privada");
-                      },
-                      readOnly: true,
-                      maxLines: 6,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: "Chave privada",
-                        hintText: "Key ID:",
-                        contentPadding: EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 8
-                        )
+                  GestureDetector(
+                    onTap: (){
+                      _dialogBuilder(context, "privada");
+                    },
+                    child: Container(
+                      width: 150,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            color: Colors.grey,
+                            width: 2.0
+                        ),
                       ),
-                      controller: privateKeyTextController,
+                      child: Center(
+                        child: Icon( Icons.lock, size: 100,),
+                      ),
                     ),
                   ),
+                  // Expanded(
+                  //   child: TextFormField(
+                  //     onTap: (){
+                  //       _dialogBuilder(context, "privada");
+                  //     },
+                  //     readOnly: true,
+                  //     maxLines: 6,
+                  //     decoration: const InputDecoration(
+                  //       border: OutlineInputBorder(),
+                  //       labelText: "Chave privada",
+                  //       hintText: "Key ID:",
+                  //       contentPadding: EdgeInsets.symmetric(
+                  //         vertical: 12,
+                  //         horizontal: 8
+                  //       )
+                  //     ),
+                  //     controller: privateKeyTextController,
+                  //   ),
+                  // ),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,

@@ -20,8 +20,10 @@ class _PhoneFormState extends State<PhoneForm> {
 
   final _formKey = GlobalKey<FormState>();
 
-  List<String> algorithms = <String>["RSA", "AES", "MD5"];
+  List<String> algorithms = <String>["RSA", "AES"];
   late String _algorithm;
+  bool _generatedKeys = false;
+  bool _generating = false;
 
   @override
   void initState() {
@@ -29,12 +31,30 @@ class _PhoneFormState extends State<PhoneForm> {
     super.initState();
   }
 
+  Future<String?> _generateKeyPair() async {
+    setState(() {
+      _generating = true;
+    });
+    var cryptoService = getIt.get<CryptoService>();
+    KeyPair keyPair = await cryptoService.generateKeryPair();
+    publicKeyTextController.text = keyPair.publicKey;
+    privateKeyTextController.text = keyPair.privateKey;
+    setState(() {
+      _generating = false;
+      _generatedKeys = true;
+    });
+    return null;
+  }
+
   Future<String> _getPublicKey() async {
     if(publicKeyTextController.text == ""){
       var cryptoService = getIt.get<CryptoService>();
       KeyPair keyPair = await cryptoService.generateKeryPair();
-      publicKeyTextController.text = keyPair.publicKey;
-      privateKeyTextController.text = keyPair.privateKey;
+      setState(() {
+        publicKeyTextController.text = keyPair.publicKey;
+        privateKeyTextController.text = keyPair.privateKey;
+        _generatedKeys = true;
+      });
       return publicKeyTextController.text;
     }
     return publicKeyTextController.text;
@@ -148,11 +168,7 @@ class _PhoneFormState extends State<PhoneForm> {
                   Expanded(
                     child: ElevatedButton(
                         onPressed: () async {
-                          var secretText = await cryptoService.cryptograph(
-                              message: cleanTextController.text,
-                              publicKey: await _getPublicKey()
-                          );
-                          secretTextController.text = secretText;
+                          await _generateKeyPair();
                         },
                         child: Text("Aplicar")
                     ),
@@ -161,47 +177,93 @@ class _PhoneFormState extends State<PhoneForm> {
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
-                child: Text("Gerar par de chaves"),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Gerar par de chaves"),
+                    SizedBox( width: 8,),
+                    _generating ?
+                        SizedBox(
+                          height: 8,
+                          width: 8,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        ) :
+                        SizedBox( width: 8,)
+                  ],
+                ),
                 onPressed: () async {
-                  KeyPair keyPair = await cryptoService.generateKeryPair();
-                  publicKeyTextController.text = keyPair.publicKey;
-                  privateKeyTextController.text = keyPair.privateKey;
+                  await _generateKeyPair();
                 },
               ),
               SizedBox(height: 16,),
-              TextFormField(
-                onTap: (){
-                  _dialogBuilder(context, "pública");
-                },
-                readOnly: true,
-                maxLines: 6,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Chave publica",
-                  contentPadding: EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 8
-                  )
-                ),
-                controller: publicKeyTextController,
-              ),
-              SizedBox(height: 8,),
-              TextFormField(
-                onTap: (){
-                  _dialogBuilder(context, "privada");
-                },
-                readOnly: true,
-                maxLines: 6,
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "chave privada",
-                    contentPadding: EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 8
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: (){
+                      _dialogBuilder(context, "privada");
+                    },
+                    child: Container(
+                      width: 150,
+                      height: 150,
+                      child: Column(
+                        children: [
+                          Text("Chave privada"),
+                          Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.grey,
+                                  width: 2.0
+                              ),
+                            ),
+                            child: Center(
+                              child: _generatedKeys ?
+                              Icon( Icons.key, size: 80,) :
+                              Text("Gerar chave"),
+                            ),
+                          ),
+                          Text("Clique para abrir", style: TextStyle(fontSize: 10),),
+                        ],
+                      ),
                     )
-                ),
-                controller: privateKeyTextController,
-              ),
+                  ),
+                  GestureDetector(
+                      onTap: (){
+                        _dialogBuilder(context, "pública");
+                      },
+                      child: Container(
+                        width: 150,
+                        height: 150,
+                        child: Column(
+                          children: [
+                            Text("Chave publica"),
+                            Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.grey,
+                                    width: 2.0
+                                ),
+                              ),
+                              child: Center(
+                                child: _generatedKeys ?
+                                Icon( Icons.lock, size: 80,) :
+                                Text("Gerar chave"),
+                                // Text("Gerar chave"),
+                              ),
+                            ),
+                            Text("Clique para abrir", style: TextStyle(fontSize: 10),),
+                          ],
+                        ),
+                      )
+                  ),
+                ],
+              )
             ],
           ),
         ),

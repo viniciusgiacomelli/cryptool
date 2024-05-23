@@ -7,9 +7,22 @@ class CryptoService {
     return keyPair;
   }
 
-  Future<String> cryptograph({required String message, required String publicKey}) async {
-    var result = await RSA.encryptPKCS1v15(message,publicKey);
-    return result;
+  Future<String?> cryptograph({
+    required String algorithm,
+    required String message,
+    String? publicKey
+  }) async {
+    switch(algorithm){
+      case "RSA":
+        var result = await RSA.encryptPKCS1v15(message,publicKey!);
+        return result;
+      case "AES":
+        var result = await RSA.hash(message, Hash.SHA512);
+        return result;
+      default:
+        return null;
+    }
   }
+
 
 }
