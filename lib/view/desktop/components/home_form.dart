@@ -12,44 +12,75 @@ class HomeForm extends StatefulWidget {
 
 class _HomeFormState extends State<HomeForm> {
   GetIt getIt = GetIt.instance;
-
-  final TextEditingController cleanTextController = TextEditingController();
-  final TextEditingController secretTextController = TextEditingController();
-  final TextEditingController publicKeyTextController = TextEditingController();
-  final TextEditingController privateKeyTextController = TextEditingController();
+  late CryptoService _cryptoService;
 
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController cleanTextController      = TextEditingController();
+  final TextEditingController secretTextController     = TextEditingController();
+  final TextEditingController publicKeyTextController  = TextEditingController();
+  final TextEditingController privateKeyTextController = TextEditingController();
 
   List<String> algorithms = <String>["RSA", "AES"];
-
   late String _algorithm;
+  bool _generatedKeys = false;
+  bool _generating = false;
 
   @override
   void initState() {
+    _cryptoService = getIt.get<CryptoService>();
     _algorithm = algorithms[0];
     super.initState();
   }
 
+  Future<String?> _generateKeyPair() async {
+    setState(() {
+      _generating = true;
+    });
+    KeyPair keyPair = await _cryptoService.generateKeryPair();
+    publicKeyTextController.text = keyPair.publicKey;
+    privateKeyTextController.text = keyPair.privateKey;
+    setState(() {
+      _generating = false;
+      _generatedKeys = true;
+    });
+    return null;
+  }
+
+  Future<bool> _applyCriptography() async {
+    var publicKey = await _getPublicKey();
+    var secret = await _cryptoService.cryptograph(
+        algorithm: _algorithm,
+        message: cleanTextController.text,
+        publicKey: _algorithm == "RSA" ? publicKey : null
+    );
+    if(secret != null){
+      secretTextController.text = secret;
+      return true;
+    }
+    return false;
+  }
+
   Future<String> _getPublicKey() async {
     if(publicKeyTextController.text == ""){
-      var cryptoService = getIt.get<CryptoService>();
-      KeyPair keyPair = await cryptoService.generateKeryPair();
-      publicKeyTextController.text = keyPair.publicKey;
-      privateKeyTextController.text = keyPair.privateKey;
+      await _generateKeyPair();
       return publicKeyTextController.text;
     }
     return publicKeyTextController.text;
   }
 
-  Future<void> _dialogBuilder(BuildContext context, String privacyType) {
+  Future<void> _dialogBuilder(
+      BuildContext context,
+      String title,
+      String content
+      ){
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Chave $privacyType'),
-          content: privacyType == "pública" ?
-          Text(publicKeyTextController.text):
-          SingleChildScrollView(child: Text(privateKeyTextController.text)),
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: Text(content),
+          ),
           actions: <Widget>[
             TextButton(
               style: TextButton.styleFrom(
@@ -205,7 +236,11 @@ class _HomeFormState extends State<HomeForm> {
                 children: [
                   GestureDetector(
                     onTap: (){
-                      _dialogBuilder(context, "privada");
+                      _dialogBuilder(
+                          context,
+                          "Chave privada",
+                        privateKeyTextController.text
+                      );
                     },
                     child: Container(
                       width: 150,
@@ -239,7 +274,11 @@ class _HomeFormState extends State<HomeForm> {
                   Expanded(
                     child: TextFormField(
                       onTap: (){
-                        _dialogBuilder(context, "pública");
+                        _dialogBuilder(
+                          context,
+                          "pública",
+                          publicKeyTextController.text
+                        );
                       },
                       readOnly: true,
                       maxLines: 6,

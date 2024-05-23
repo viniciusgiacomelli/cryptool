@@ -24,5 +24,15 @@ class CryptoService {
     }
   }
 
+  Future<String?> decryptPKCS({
+    required String secret,
+    required String privateKey
+  }) async {
+
+    var message = await RSA.decryptPKCS1v15(secret, privateKey);
+    return message;
+
+  }
+
 
 }

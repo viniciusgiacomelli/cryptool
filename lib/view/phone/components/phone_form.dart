@@ -137,7 +137,7 @@ class _PhoneFormState extends State<PhoneForm> {
                       onTap: (){
                         _dialogBuilder(
                           context,
-                          _algorithm == "RSA" ? "Texto secreto" : "Hash",
+                          _algorithm == "RSA" ? "Texto criptografado" : "Hash",
                           secretTextController.text
                         );
                       },
@@ -221,7 +221,6 @@ class _PhoneFormState extends State<PhoneForm> {
                   },
                 ),
               ),
-              SizedBox(height: 16,),
               Visibility(
                 visible: _algorithm == "RSA",
                 child: Row(
@@ -236,7 +235,7 @@ class _PhoneFormState extends State<PhoneForm> {
                             );
                           },
                           child: Container(
-                            width: 150,
+                            width: 140,
                             height: 250,
                             child: Column(
                               children: [
@@ -276,7 +275,7 @@ class _PhoneFormState extends State<PhoneForm> {
                             );
                           },
                           child: Container(
-                            width: 150,
+                            width: 140,
                             height: 250,
                             child: Column(
                               children: [
