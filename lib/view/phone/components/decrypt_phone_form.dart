@@ -33,6 +33,9 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
     required BuildContext context,
     required String title,
     required String content,
+    required bool activeDownload,
+    required String fileName,
+    TextEditingController? field
   }) {
     return showDialog<void>(
       context: context,
@@ -41,17 +44,30 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
           title: Text(title),
           content: SingleChildScrollView(child: Text(content)),
           actions: <Widget>[
-            Visibility(
-              visible: _privateKey,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  textStyle: Theme.of(context).textTheme.labelLarge,
-                ),
-                child: const Text('Copiar'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
+            ElevatedButton.icon(
+              icon: Icon(Icons.download),
+              label: Text("Baixar"),
+              onPressed: activeDownload ?  (){
+                _cryptoService.save(
+                    content: content,
+                    type: fileName
+                );
+                Navigator.of(context).pop();
+              } : null,
+            ),
+            ElevatedButton.icon(
+              icon: Icon(Icons.delete_forever, color: Colors.redAccent,),
+              label: Text("Limpar"),
+              onPressed: activeDownload ?  (){
+                field?.text = "";
+                if(field == privateKeyTextController){
+                  setState(() {
+                    _privateKey = false;
+
+                  });
+                }
+                Navigator.of(context).pop();
+              } : null,
             ),
             TextButton(
               style: TextButton.styleFrom(
@@ -80,7 +96,9 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
       _dialogBuilder(
           context: context,
           title: "Atenção",
-          content: errors
+          content: errors,
+          activeDownload: false,
+          fileName: ""
       );
     } else {
       var cleanText = await _cryptoService.decryptPKCS(
@@ -93,7 +111,9 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
         _dialogBuilder(
             context: context,
             title: "Erro",
-            content: "Erro ao descriptogarafar"
+            content: "Erro ao descriptogarafar",
+            activeDownload: false,
+            fileName: "Verifique a chave e o texto enviados e tente novamente"
         );
       }
     }
@@ -128,12 +148,23 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                   SizedBox(width: 8,),
                   Expanded(
                     child: TextFormField(
+                      onTap: (){
+                        _dialogBuilder(
+                            context: context,
+                            title: "Texto claro",
+                            content: cleanTextController.text != "" ?
+                            cleanTextController.text :
+                            "Seu texto claro aparecerá aqui",
+                            activeDownload: cleanTextController.text != "",
+                            fileName: "clear_text",
+                          field: cleanTextController
+                        );
+                      },
                       readOnly: true,
                       maxLines: 6,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: "Texto claro",
-                        hintText: "Seu texto aparecerá aqui",
+                        hintText: "Texto claro",
                         contentPadding: EdgeInsets.symmetric(
                           vertical: 12,
                           horizontal: 8
@@ -145,24 +176,45 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                 ],
               ),
               SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: (){
-                  if(_formKey.currentState!.validate()){
-                    _handleDecrypt();
-                  }
-                },
-                child: Text("Descriptografar")
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      icon: Icon(Icons.upload, size: 20,),
+                      label: Text("Carregar ... "),
+                      onPressed: () async {
+                        String? secretText = await _cryptoService.uploadFile();
+                        if(secretText != null){
+                          setState(() {
+                            secretTextController.text = secretText;
+                          });
+                        }
+                      },
+                    )
+                  ),
+                  SizedBox(width: 8,),
+                  Expanded(
+                      child: ElevatedButton(
+                          onPressed: (){
+                            _handleDecrypt();
+                          },
+                          child: Text("Descriptografar")
+                      ),
+                  )
+                ],
               ),
               SizedBox(height: 8,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              Column(
                 children: [
                   GestureDetector(
                       onTap: (){
                         _dialogBuilder(
                             context: context,
                             title: _privateKey ? "Chave privada" : "Carregue uma chave",
-                          content: privateKeyTextController.text
+                          content: privateKeyTextController.text,
+                          activeDownload: _privateKey,
+                          fileName: "private_key",
+                          field: privateKeyTextController
                         );
                       },
                       child: Container(
@@ -191,10 +243,11 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                         ),
                       )
                   ),
-                  ElevatedButton(
-                    child: Text("Carregar ... "),
+                  ElevatedButton.icon(
+                    icon: Icon(Icons.upload, size: 20,),
+                    label: Text("Carregar ... "),
                     onPressed: () async {
-                      String? publicKey = await _cryptoService.uploadKey();
+                      String? publicKey = await _cryptoService.uploadFile();
                       if(publicKey != null){
                         setState(() {
                           privateKeyTextController.text = publicKey;

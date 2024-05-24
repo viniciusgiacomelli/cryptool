@@ -50,7 +50,7 @@ class CryptoService {
     return false;
   }
 
-  Future<String?> uploadKey() async {
+  Future<String?> uploadFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
     if (result != null) {
