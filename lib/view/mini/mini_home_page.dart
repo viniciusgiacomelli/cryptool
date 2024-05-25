@@ -2,16 +2,16 @@ import 'package:cryptool/view/phone/components/decrypt_phone_form.dart';
 import 'package:flutter/material.dart';
 
 import '../desktop/components/home_header.dart';
-import 'components/phone_form.dart';
+import 'components/mini_phone_form.dart';
 
-class PhoneHomePage extends StatefulWidget {
-  const PhoneHomePage({super.key});
+class MiniHomePage extends StatefulWidget {
+  const MiniHomePage({super.key});
 
   @override
-  State<PhoneHomePage> createState() => _PhoneHomePageState();
+  State<MiniHomePage> createState() => _MiniHomePageState();
 }
 
-class _PhoneHomePageState extends State<PhoneHomePage> {
+class _MiniHomePageState extends State<MiniHomePage> {
 
   int currentPageIndex = 0;
 
@@ -43,7 +43,7 @@ class _PhoneHomePageState extends State<PhoneHomePage> {
             children: [
               HomeHeader(),
               <Widget>[
-                PhoneForm(),
+                MiniForm(),
                 MiniDecryptForm()
               ][currentPageIndex]
             ],

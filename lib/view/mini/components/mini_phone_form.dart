@@ -3,14 +3,14 @@ import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-class PhoneForm extends StatefulWidget {
-  const PhoneForm({super.key});
+class MiniForm extends StatefulWidget {
+  const MiniForm({super.key});
 
   @override
-  State<PhoneForm> createState() => _PhoneFormState();
+  State<MiniForm> createState() => _MiniFormState();
 }
 
-class _PhoneFormState extends State<PhoneForm> {
+class _MiniFormState extends State<MiniForm> {
   GetIt getIt = GetIt.instance;
   late CryptoService _cryptoService;
 
@@ -92,26 +92,14 @@ class _PhoneFormState extends State<PhoneForm> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(title),
-              IconButton(
-                icon: Icon(Icons.close_rounded, color: Colors.indigoAccent,),
-                onPressed: (){
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
+          title: Text(title),
           content: SingleChildScrollView(
-              child: Text(content)
+              child: Text(content),
           ),
-          actionsAlignment: MainAxisAlignment.spaceBetween,
+          actionsAlignment: MainAxisAlignment.spaceEvenly,
           actions: <Widget>[
-            ElevatedButton.icon(
-              icon: Icon(Icons.download),
-                label: Text("Baixar"),
+            IconButton(
+              icon: Icon(Icons.download, color: activeDownload ? Colors.blue : Colors.black12),
                 onPressed: activeDownload ?  (){
                   _cryptoService.save(
                       content: content,
@@ -120,9 +108,8 @@ class _PhoneFormState extends State<PhoneForm> {
                   Navigator.of(context).pop();
                 } : null,
             ),
-            ElevatedButton.icon(
-              icon: Icon(Icons.delete_forever),
-              label: Text("Limpar"),
+            IconButton(
+              icon: Icon(Icons.delete_forever,  color: activeDownload ? Colors.red : Colors.black12),
               onPressed: activeDownload ?  (){
                 field?.text = "";
                 if(field == privateKeyTextController){
@@ -136,6 +123,12 @@ class _PhoneFormState extends State<PhoneForm> {
                 }
                 Navigator.of(context).pop();
               } : null,
+            ),
+            IconButton(
+              icon: Icon(Icons.close_rounded,  color: Colors.indigoAccent),
+              onPressed: (){
+                Navigator.of(context).pop();
+              },
             ),
           ],
         );
@@ -274,7 +267,7 @@ class _PhoneFormState extends State<PhoneForm> {
                             _dialogBuilder(
                               context: context,
                               title: "Chave pública",
-                              content: _publicKey ? publicKeyTextController.text : "Carregue ou gere uma nova chave pública",
+                              content: _publicKey ? publicKeyTextController.text : "Carregue ou gere uma chave pública",
                               activeDownload: _publicKey,
                               fileName: "public_key",
                               field: publicKeyTextController

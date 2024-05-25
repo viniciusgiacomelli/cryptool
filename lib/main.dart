@@ -1,4 +1,5 @@
 import 'package:cryptool/view/desktop/home_page.dart';
+import 'package:cryptool/view/mini/mini_home_page.dart';
 import 'package:cryptool/view/phone/phone_home_page.dart';
 import 'package:cryptool/viewmodel/services/crypto_service.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,17 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  Widget _handleScreen({ required double width}){
+    switch(width){
+      case < 330:
+        return MiniHomePage();
+      case < 750 :
+        return PhoneHomePage();
+      default:
+        return HomePage();
+    }
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -23,8 +35,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: width > 770 ?
-          HomePage() : PhoneHomePage()
+      home: _handleScreen(width: width)
       );
   }
 }

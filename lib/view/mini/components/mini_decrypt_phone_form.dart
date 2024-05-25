@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 
-class MiniDecryptForm extends StatefulWidget {
-  const MiniDecryptForm({super.key});
+class DecryptPhoneForm extends StatefulWidget {
+  const DecryptPhoneForm({super.key});
 
   @override
-  State<MiniDecryptForm> createState() => _MiniDecryptFormState();
+  State<DecryptPhoneForm> createState() => _DecryptPhoneFormState();
 }
 
-class _MiniDecryptFormState extends State<MiniDecryptForm> {
+class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
   GetIt getIt = GetIt.instance;
   late CryptoService _cryptoService;
 
@@ -41,20 +41,8 @@ class _MiniDecryptFormState extends State<MiniDecryptForm> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(title),
-              IconButton(
-                icon: Icon(Icons.close_rounded, color: Colors.indigoAccent,),
-                onPressed: (){
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
+          title: Text(title),
           content: SingleChildScrollView(child: Text(content)),
-          actionsAlignment: MainAxisAlignment.spaceBetween,
           actions: <Widget>[
             ElevatedButton.icon(
               icon: Icon(Icons.download),
@@ -80,6 +68,15 @@ class _MiniDecryptFormState extends State<MiniDecryptForm> {
                 }
                 Navigator.of(context).pop();
               } : null,
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Fechar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
             ),
           ],
         );
