@@ -112,7 +112,7 @@ class _HomeFormState extends State<HomeForm> {
                     Expanded(
                       flex: 2,
                       child: TextFormField(
-                        maxLines: 6,
+                        maxLines: 8,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Texto claro",
@@ -137,8 +137,23 @@ class _HomeFormState extends State<HomeForm> {
                                   textDirection: TextDirection.rtl,
                                   child: ElevatedButton.icon(
                                     onPressed: (){},
-                                    label: Text("Criptografar"),
-                                    icon: Icon(Icons.arrow_back),
+                                    label: Text("Criptografar",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white
+                                      ),
+                                    ),
+                                    icon: Icon(
+                                      Icons.keyboard_double_arrow_right_rounded,
+                                      color: Colors.white,
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.indigoAccent,
+                                        padding: EdgeInsets.symmetric(vertical: 15),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8)
+                                        )
+                                    ),
                                   ),
                                 ),
                             ),
@@ -147,8 +162,23 @@ class _HomeFormState extends State<HomeForm> {
                                 width: double.maxFinite,
                                 child: ElevatedButton.icon(
                                   onPressed: (){},
-                                  label: Text("Descriptografar"),
-                                  icon: Icon(Icons.arrow_back),
+                                  label: Text("Descriptografar",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      color: Colors.white
+                                    ),
+                                  ),
+                                  icon: Icon(Icons.keyboard_double_arrow_left_rounded,
+                                    color: Colors.white,
+                                    textDirection: TextDirection.ltr,
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.indigoAccent,
+                                      padding: EdgeInsets.symmetric(vertical: 15),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8)
+                                      )
+                                  ),
                                 ),
                             )
                           ],
@@ -158,7 +188,7 @@ class _HomeFormState extends State<HomeForm> {
                     Expanded(
                       flex: 2,
                       child: TextFormField(
-                        maxLines: 6,
+                        maxLines: 8,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Texto criptografado",
@@ -182,6 +212,7 @@ class _HomeFormState extends State<HomeForm> {
                           textController: publicKeyTextController,
                           active: publicKeyTextController.text != "",
                           iconData: Icons.key_rounded,
+                          type: "publica",
                         ),
                     ),
                     Expanded(
@@ -191,20 +222,33 @@ class _HomeFormState extends State<HomeForm> {
                         child: Visibility(
                           visible: _algorithm == "RSA",
                           child: ElevatedButton(
-                            child: Row(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.indigoAccent,
+                                padding: EdgeInsets.symmetric(vertical: 15),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8)
+                                )
+                            ),
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text("Gerar novo par\n de chaves"),
+                                Text("Gerar novo par\n de chaves",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                ),
                                 SizedBox( width: 8,),
                                 _generating ?
                                 SizedBox(
-                                  height: 8,
-                                  width: 8,
+                                  height: 20,
+                                  width: 20,
                                   child: CircularProgressIndicator(
-                                    strokeWidth: 2,
+                                    strokeWidth: 3,
+                                    color: Colors.white,
                                   ),
                                 ) :
-                                SizedBox( width: 8,)
+                                Icon(Icons.cached_rounded, color: Colors.white,)
                               ],
                             ),
                             onPressed: () async {
@@ -220,6 +264,7 @@ class _HomeFormState extends State<HomeForm> {
                           textController: privateKeyTextController,
                           active: privateKeyTextController.text != "",
                           iconData: Icons.lock,
+                          type: "privada",
                         ),
                     ),
 
