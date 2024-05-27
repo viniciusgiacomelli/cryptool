@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     switch(width){
       case < 330:
         return MiniHomePage();
-      case < 750 :
+      case < 870 :
         return PhoneHomePage();
       default:
         return HomePage();

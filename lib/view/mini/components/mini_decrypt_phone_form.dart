@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 
-class DecryptPhoneForm extends StatefulWidget {
-  const DecryptPhoneForm({super.key});
+class MiniDecryptForm extends StatefulWidget {
+  const MiniDecryptForm({super.key});
 
   @override
-  State<DecryptPhoneForm> createState() => _DecryptPhoneFormState();
+  State<MiniDecryptForm> createState() => _MiniDecryptFormState();
 }
 
-class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
+class _MiniDecryptFormState extends State<MiniDecryptForm> {
   GetIt getIt = GetIt.instance;
   late CryptoService _cryptoService;
 
@@ -43,10 +43,10 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
         return AlertDialog(
           title: Text(title),
           content: SingleChildScrollView(child: Text(content)),
+          actionsAlignment: MainAxisAlignment.spaceBetween,
           actions: <Widget>[
-            ElevatedButton.icon(
-              icon: Icon(Icons.download),
-              label: Text("Baixar"),
+            IconButton(
+              icon: Icon(Icons.download, color: activeDownload ? Colors.blue : Colors.black12),
               onPressed: activeDownload ?  (){
                 _cryptoService.save(
                     content: content,
@@ -55,26 +55,19 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                 Navigator.of(context).pop();
               } : null,
             ),
-            ElevatedButton.icon(
-              icon: Icon(Icons.delete_forever, color: Colors.redAccent,),
-              label: Text("Limpar"),
+            IconButton(
+              icon: Icon(Icons.delete_forever,  color: activeDownload ? Colors.red : Colors.black12),
               onPressed: activeDownload ?  (){
-                field?.text = "";
-                if(field == privateKeyTextController){
-                  setState(() {
-                    _privateKey = false;
-
-                  });
-                }
+                setState(() {
+                  field?.text = "";
+                  _privateKey = false;
+                });
                 Navigator.of(context).pop();
               } : null,
             ),
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Fechar'),
-              onPressed: () {
+            IconButton(
+              icon: Icon(Icons.close_rounded,  color: Colors.indigoAccent),
+              onPressed: (){
                 Navigator.of(context).pop();
               },
             ),

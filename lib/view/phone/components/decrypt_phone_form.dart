@@ -1,18 +1,15 @@
 import 'package:cryptool/viewmodel/services/crypto_service.dart';
-import 'package:fast_rsa/fast_rsa.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 
-class MiniDecryptForm extends StatefulWidget {
-  const MiniDecryptForm({super.key});
+class DecryptPhoneForm extends StatefulWidget {
+  const DecryptPhoneForm({super.key});
 
   @override
-  State<MiniDecryptForm> createState() => _MiniDecryptFormState();
+  State<DecryptPhoneForm> createState() => _DecryptPhoneFormState();
 }
 
-class _MiniDecryptFormState extends State<MiniDecryptForm> {
+class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
   GetIt getIt = GetIt.instance;
   late CryptoService _cryptoService;
 
@@ -53,7 +50,9 @@ class _MiniDecryptFormState extends State<MiniDecryptForm> {
               ),
             ],
           ),
-          content: SingleChildScrollView(child: Text(content)),
+          content: SingleChildScrollView(
+              child: Text(content)
+          ),
           actionsAlignment: MainAxisAlignment.spaceBetween,
           actions: <Widget>[
             ElevatedButton.icon(
@@ -68,16 +67,13 @@ class _MiniDecryptFormState extends State<MiniDecryptForm> {
               } : null,
             ),
             ElevatedButton.icon(
-              icon: Icon(Icons.delete_forever, color: Colors.redAccent,),
+              icon: Icon(Icons.delete_forever),
               label: Text("Limpar"),
               onPressed: activeDownload ?  (){
-                field?.text = "";
-                if(field == privateKeyTextController){
-                  setState(() {
-                    _privateKey = false;
-
-                  });
-                }
+                setState(() {
+                  field?.text = "";
+                  _privateKey = false;
+                });
                 Navigator.of(context).pop();
               } : null,
             ),
@@ -210,41 +206,41 @@ class _MiniDecryptFormState extends State<MiniDecryptForm> {
               Column(
                 children: [
                   GestureDetector(
-                      onTap: (){
-                        _dialogBuilder(
-                            context: context,
-                            title: _privateKey ? "Chave privada" : "Carregue uma chave",
-                          content: privateKeyTextController.text,
-                          activeDownload: _privateKey,
-                          fileName: "private_key",
-                          field: privateKeyTextController
-                        );
-                      },
-                      child: Container(
-                        width: 150,
-                        height: 150,
-                        child: Column(
-                          children: [
-                            Text("Chave privada"),
-                            Container(
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Colors.grey,
-                                    width: 2.0
-                                ),
-                              ),
-                              child: Center(
-                                child: _privateKey ?
-                                Icon( Icons.key_rounded, size: 80,) :
-                                Icon( Icons.key_rounded, size: 80, color: Colors.black26),
-                              ),
+                    onTap: (){
+                      _dialogBuilder(
+                          context: context,
+                          title: _privateKey ? "Chave privada" : "Carregue uma chave",
+                        content: privateKeyTextController.text,
+                        activeDownload: _privateKey,
+                        fileName: "private_key",
+                        field: privateKeyTextController
+                      );
+                    },
+                    child: Container(
+                      width: 150,
+                      height: 150,
+                      child: Column(
+                        children: [
+                        Text("Chave privada"),
+                        Container(
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey,
+                              width: 2.0
                             ),
-                            Text( _privateKey ? "Clique para abrir" : "Carregue uma chave", style: TextStyle(fontSize: 10),),
-                          ],
+                          ),
+                          child: Center(
+                            child: _privateKey ?
+                            Icon( Icons.key_rounded, size: 80,) :
+                            Icon( Icons.key_rounded, size: 80, color: Colors.black26),
+                          ),
                         ),
-                      )
+                        Text( _privateKey ? "Clique para abrir" : "Carregue uma chave", style: TextStyle(fontSize: 10),),
+                        ],
+                      ),
+                    )
                   ),
                   ElevatedButton.icon(
                     icon: Icon(Icons.upload, size: 20,),
