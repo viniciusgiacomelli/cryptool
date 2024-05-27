@@ -1,5 +1,6 @@
 import 'package:cryptool/viewmodel/services/crypto_service.dart';
 import 'package:fast_rsa/fast_rsa.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -46,6 +47,24 @@ class _PhoneFormState extends State<PhoneForm> {
       _generating = false;
     });
     return null;
+  }
+
+  Future<bool> _handleUpload({
+    required TextEditingController controller,
+    required String field
+  }) async {
+    String? publicKey = await _cryptoService.uploadFile();
+    if(publicKey != null){
+      setState(() {
+        controller.text = publicKey;
+        if(field == "private"){
+          _privateKey = true;
+        } else {
+          _publicKey = true;
+        }
+      });
+      return true;
+    } return false;
   }
 
   Future<String> _getPublicKey() async {
@@ -361,13 +380,17 @@ class _PhoneFormState extends State<PhoneForm> {
                                   icon: Icon( Icons.upload, size: 20,),
                                   label: Text("Carregar"),
                                   onPressed: () async {
-                                    String? privateKey = await _cryptoService.uploadFile();
-                                    if(privateKey != null){
-                                      setState(() {
-                                        privateKeyTextController.text = privateKey;
-                                        _privateKey = true;
-                                      });
-                                    }
+                                    await _handleUpload(
+                                        controller: privateKeyTextController,
+                                      field: "private"
+                                    );
+                                    //String? privateKey = await _cryptoService.uploadFile();
+                                    // if(privateKey != null){
+                                    //   setState(() {
+                                    //     privateKeyTextController.text = privateKey;
+                                    //     _privateKey = true;
+                                    //   });
+                                    // }
                                   },
                                 )
                               ],

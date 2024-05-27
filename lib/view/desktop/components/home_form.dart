@@ -1,9 +1,6 @@
-import 'package:cryptool/view/desktop/components/key_card.dart';
 import 'package:cryptool/viewmodel/services/crypto_service.dart';
 import 'package:fast_rsa/fast_rsa.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 
 class HomeForm extends StatefulWidget {
@@ -25,26 +22,51 @@ class _HomeFormState extends State<HomeForm> {
 
   List<String> algorithms = <String>["RSA", "AES"];
   late String _algorithm;
-  bool _generatedKeys = false;
+  bool _privateKey = false;
+  bool _publicKey = false;
   bool _generating = false;
 
   @override
   void initState() {
     _cryptoService = getIt.get<CryptoService>();
     _algorithm = algorithms[0];
+
     super.initState();
+  }
+
+  Future<bool> _handleUpload({
+    required TextEditingController controller,
+    required String field
+  }) async {
+    String? publicKey = await _cryptoService.uploadFile();
+    if(publicKey != null){
+      setState(() {
+          controller.text = publicKey;
+        if(field == "privada"){
+          _privateKey = true;
+        } else {
+          _publicKey = true;
+        }
+      });
+      return true;
+    } return false;
   }
 
   Future<String?> _generateKeyPair() async {
     setState(() {
       _generating = true;
+      _publicKey = false;
+      _privateKey = false;
+      publicKeyTextController.text = "";
+      privateKeyTextController.text = "";
     });
     KeyPair keyPair = await _cryptoService.generateKeryPair();
-    publicKeyTextController.text = keyPair.publicKey;
-    privateKeyTextController.text = keyPair.privateKey;
     setState(() {
       _generating = false;
-      _generatedKeys = true;
+      _publicKey = true;
+      _privateKey = true;
+      publicKeyTextController.text = keyPair.publicKey;
+      privateKeyTextController.text = keyPair.privateKey;
     });
     return null;
   }
@@ -64,7 +86,7 @@ class _HomeFormState extends State<HomeForm> {
   }
 
   Future<String> _getPublicKey() async {
-    if(publicKeyTextController.text == ""){
+    if(!_publicKey){
       await _generateKeyPair();
       return publicKeyTextController.text;
     }
@@ -208,12 +230,120 @@ class _HomeFormState extends State<HomeForm> {
                   children: [
                     Expanded(
                       flex: 2,
-                        child: KeyCard(
-                          textController: publicKeyTextController,
-                          active: publicKeyTextController.text != "",
-                          iconData: Icons.key_rounded,
-                          type: "publica",
-                        ),
+                        child:Container(
+                          padding: EdgeInsets.all(8),
+                          height: 400,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black, width: 1)
+                          ),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 100,
+                                      height: 100,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.grey,
+                                            width: 2.0
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: _publicKey ?
+                                        Icon( Icons.key_rounded, size: 80,) :
+                                        Icon( Icons.key_rounded, size: 80, color: Colors.black12,),
+                                        // Text("Gerar chave"),
+                                      ),
+                                    ), // ChaveIcon
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Text("Chave publica",
+                                              style: TextStyle(
+                                                  fontSize: 25,
+                                                  fontWeight: FontWeight.w200
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: ElevatedButton.icon(
+                                                      onPressed:(){
+                                                        _handleUpload(
+                                                            controller: publicKeyTextController,
+                                                            field: "publica"
+                                                        );
+                                                      },
+                                                      icon: Icon(Icons.upload, color: Colors.white,),
+                                                      label: Text("Upload",
+                                                        style: TextStyle(
+                                                            color: Colors.white
+                                                        ),
+                                                      ),
+                                                      style: ElevatedButton.styleFrom(
+                                                          backgroundColor: Colors.indigoAccent,
+                                                          padding: EdgeInsets.symmetric(vertical: 15),
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(8)
+                                                          )
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 8,),
+                                                  Expanded(
+                                                    child: ElevatedButton.icon(
+                                                      onPressed: _publicKey ? (){} : null,
+                                                      icon: Icon(Icons.download, color: Colors.white,),
+                                                      label: Text("Download",
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight: FontWeight.bold
+                                                        ),
+                                                      ),
+                                                      style: ElevatedButton.styleFrom(
+                                                          backgroundColor: Colors.indigoAccent,
+                                                          padding: EdgeInsets.symmetric(vertical: 15),
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(8)
+                                                          )
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 8,),
+                              TextFormField(
+                                readOnly: true,
+                                maxLines: 10,
+                                decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    hintText: "Texto criptografado",
+                                    contentPadding: EdgeInsets.symmetric(
+                                        vertical: 12,
+                                        horizontal: 8
+                                    )
+                                ),
+                                controller: publicKeyTextController,
+                              ),
+                            ],
+                          ),
+                        )
                     ),
                     Expanded(
                       flex: 1,
@@ -260,12 +390,120 @@ class _HomeFormState extends State<HomeForm> {
                     ),
                     Expanded(
                       flex: 2,
-                        child: KeyCard(
-                          textController: privateKeyTextController,
-                          active: privateKeyTextController.text != "",
-                          iconData: Icons.lock,
-                          type: "privada",
-                        ),
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          height: 400,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black, width: 1)
+                          ),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 100,
+                                      height: 100,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.grey,
+                                            width: 2.0
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: _privateKey ?
+                                        Icon( Icons.lock, size: 80,) :
+                                        Icon( Icons.lock, size: 80, color: Colors.black12,),
+                                        // Text("Gerar chave"),
+                                      ),
+                                    ), // ChaveIcon
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Text("Chave privada",
+                                              style: TextStyle(
+                                                  fontSize: 25,
+                                                  fontWeight: FontWeight.w200
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: ElevatedButton.icon(
+                                                      onPressed:(){
+                                                        _handleUpload(
+                                                            controller: privateKeyTextController,
+                                                            field: "privada"
+                                                        );
+                                                      },
+                                                      icon: Icon(Icons.upload, color: Colors.white,),
+                                                      label: Text("Upload",
+                                                        style: TextStyle(
+                                                            color: Colors.white
+                                                        ),
+                                                      ),
+                                                      style: ElevatedButton.styleFrom(
+                                                          backgroundColor: Colors.indigoAccent,
+                                                          padding: EdgeInsets.symmetric(vertical: 15),
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(8)
+                                                          )
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 8,),
+                                                  Expanded(
+                                                    child: ElevatedButton.icon(
+                                                      onPressed: _privateKey ? (){} : null,
+                                                      icon: Icon(Icons.download, color: Colors.white,),
+                                                      label: Text("Download",
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight: FontWeight.bold
+                                                        ),
+                                                      ),
+                                                      style: ElevatedButton.styleFrom(
+                                                          backgroundColor: Colors.indigoAccent,
+                                                          padding: EdgeInsets.symmetric(vertical: 15),
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(8)
+                                                          )
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 8,),
+                              TextFormField(
+                                readOnly: true,
+                                maxLines: 10,
+                                decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    hintText: "Texto criptografado",
+                                    contentPadding: EdgeInsets.symmetric(
+                                        vertical: 12,
+                                        horizontal: 8
+                                    )
+                                ),
+                                controller: privateKeyTextController,
+                              ),
+                            ],
+                          ),
+                        )
                     ),
 
                   ],
