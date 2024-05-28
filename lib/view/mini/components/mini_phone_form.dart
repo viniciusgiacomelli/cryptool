@@ -147,13 +147,20 @@ class _MiniFormState extends State<MiniForm> {
             child: Column(
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(child: Text("Texto claro")),
+                    Expanded(child: Text("Texto criptografado")),
+                  ],
+                ),
+                Row(
                   children: [
                     Expanded(
                       child: TextFormField(
                         maxLines: 6,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: "Texto claro",
                           hintText: "Insira seu texto",
                           contentPadding: EdgeInsets.symmetric(
                             vertical: 12,
@@ -182,7 +189,7 @@ class _MiniFormState extends State<MiniForm> {
                         maxLines: 6,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          hintText: "Texto criptografado",
+                          hintText: "Seu texto criptografado aparecerá aqui",
                           contentPadding: EdgeInsets.symmetric(
                             vertical: 12,
                             horizontal: 8
@@ -224,12 +231,21 @@ class _MiniFormState extends State<MiniForm> {
                     SizedBox( width: 12,),
                     Expanded(
                       child: ElevatedButton(
-                          onPressed: () async {
-                            if(_formKey.currentState!.validate()){
-                              var applied = await _applyCriptography();
-                            }
-                          },
-                          child: Text("Aplicar")
+                        onPressed: () async {
+                          if(_formKey.currentState!.validate()){
+                            var applied = await _applyCriptography();
+                          }
+                        },
+                        child: Text("Aplicar", style: TextStyle(
+                            color: Colors.white
+                        ),),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.indigoAccent,
+                            padding: EdgeInsets.symmetric(vertical: 15),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)
+                            )
+                        ),
                       ),
                     ),
                   ],
@@ -238,20 +254,28 @@ class _MiniFormState extends State<MiniForm> {
                 Visibility(
                   visible: _algorithm == "RSA",
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.indigoAccent,
+                        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)
+                        )
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Gerar novo par de chaves"),
+                        Text("Gerar novo par de chaves", style: TextStyle(color: Colors.white),),
                         SizedBox( width: 8,),
                         _generating ?
-                            SizedBox(
-                              height: 8,
-                              width: 8,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                              ),
-                            ) :
-                            SizedBox( width: 8,)
+                        SizedBox(
+                          height: 17,
+                          width: 17,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        ) :
+                        Icon(Icons.cached_rounded, color: Colors.white,)
                       ],
                     ),
                     onPressed: () async {
@@ -297,13 +321,20 @@ class _MiniFormState extends State<MiniForm> {
                                       // Text("Gerar chave"),
                                     ),
                                   ),
-                                  Text("Clique para abrir / carregar",
+                                  Text("Clique para abrir",
                                     style: TextStyle(fontSize: 10),
                                   ),
                                   SizedBox(height: 6,),
                                   ElevatedButton.icon(
-                                    icon: Icon(Icons.upload, size: 20,),
-                                    label: Text("Carregar"),
+                                    icon: Icon(Icons.upload, size: 20, color: Colors.white,),
+                                    label: Text("Carregar", style: TextStyle(color: Colors.white),),
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.indigoAccent,
+                                        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8)
+                                        )
+                                    ),
                                     onPressed: () async {
                                       String? publicKey = await _cryptoService.uploadFile();
                                       if(publicKey != null){
@@ -350,17 +381,24 @@ class _MiniFormState extends State<MiniForm> {
                                       Icon( Icons.key_rounded, size: 80, color: Colors.black12,),
                                     ),
                                   ),
-                                  Text("Clique para abrir / carregar", style: TextStyle(fontSize: 10),),
+                                  Text("Clique para abrir", style: TextStyle(fontSize: 10),),
                                   SizedBox(height: 6,),
                                   ElevatedButton.icon(
-                                    icon: Icon( Icons.upload, size: 20,),
-                                    label: Text("Carregar"),
+                                    icon: Icon(Icons.upload, size: 20, color: Colors.white,),
+                                    label: Text("Carregar", style: TextStyle(color: Colors.white),),
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.indigoAccent,
+                                        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8)
+                                        )
+                                    ),
                                     onPressed: () async {
-                                      String? privateKey = await _cryptoService.uploadFile();
-                                      if(privateKey != null){
+                                      String? publicKey = await _cryptoService.uploadFile();
+                                      if(publicKey != null){
                                         setState(() {
-                                          privateKeyTextController.text = privateKey;
-                                          _privateKey = true;
+                                          publicKeyTextController.text = publicKey;
+                                          _publicKey = true;
                                         });
                                       }
                                     },

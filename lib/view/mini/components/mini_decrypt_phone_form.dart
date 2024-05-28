@@ -129,7 +129,7 @@ class _MiniDecryptFormState extends State<MiniDecryptForm> {
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: "Texto criptografado",
-                        hintText: "Insira o texto secreto",
+                        hintText: "Insira o texto criptografado",
                         contentPadding: EdgeInsets.symmetric(
                           vertical: 12,
                           horizontal: 8
@@ -147,7 +147,7 @@ class _MiniDecryptFormState extends State<MiniDecryptForm> {
                             title: "Texto claro",
                             content: cleanTextController.text != "" ?
                             cleanTextController.text :
-                            "Seu texto claro aparecerá aqui",
+                            "Seu texto descriptografado aparecerá aqui",
                             activeDownload: cleanTextController.text != "",
                             fileName: "clear_text",
                           field: cleanTextController
@@ -173,8 +173,15 @@ class _MiniDecryptFormState extends State<MiniDecryptForm> {
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
-                      icon: Icon(Icons.upload, size: 20,),
-                      label: Text("Carregar ... "),
+                      icon: Icon(Icons.upload, size: 20, color: Colors.white,),
+                      label: Text("Carregar ... ", style: TextStyle(color: Colors.white),),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.indigoAccent,
+                          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)
+                          )
+                      ),
                       onPressed: () async {
                         String? secretText = await _cryptoService.uploadFile();
                         if(secretText != null){
@@ -187,12 +194,19 @@ class _MiniDecryptFormState extends State<MiniDecryptForm> {
                   ),
                   SizedBox(width: 8,),
                   Expanded(
-                      child: ElevatedButton(
-                          onPressed: (){
-                            _handleDecrypt();
-                          },
-                          child: Text("Descriptografar")
+                    child: ElevatedButton(
+                      onPressed: (){
+                        _handleDecrypt();
+                      },
+                      child: Text("Descriptografar", style: TextStyle(color: Colors.white),),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.indigoAccent,
+                          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)
+                          )
                       ),
+                    ),
                   )
                 ],
               ),
@@ -237,8 +251,15 @@ class _MiniDecryptFormState extends State<MiniDecryptForm> {
                       )
                   ),
                   ElevatedButton.icon(
-                    icon: Icon(Icons.upload, size: 20,),
-                    label: Text("Carregar ... "),
+                    icon: Icon(Icons.upload, size: 20, color: Colors.white,),
+                    label: Text("Carregar ", style: TextStyle(color: Colors.white),),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.indigoAccent,
+                        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)
+                        )
+                    ),
                     onPressed: () async {
                       String? publicKey = await _cryptoService.uploadFile();
                       if(publicKey != null){

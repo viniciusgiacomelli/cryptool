@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:file_picker/file_picker.dart';
@@ -21,8 +20,12 @@ class CryptoService {
   }) async {
     switch(algorithm){
       case "RSA":
-        var result = await RSA.encryptPKCS1v15(message,publicKey!);
-        return result;
+        try{
+          var result = await RSA.encryptPKCS1v15(message,publicKey!);
+          return result;
+        } on Exception {
+         return "ERRO! - Não foi possível criptografar corretamente a mensagem";
+        }
       case "AES":
         var result = await RSA.hash(message, Hash.SHA512);
         return result;
@@ -35,13 +38,15 @@ class CryptoService {
     required String secret,
     required String privateKey
   }) async {
-
-    var message = await RSA.decryptPKCS1v15(secret, privateKey);
-    return message;
+    try{
+      var message = await RSA.decryptPKCS1v15(secret, privateKey);
+      return message;
+    } on Exception {
+      return null;
+    }
   }
 
   Future<bool> save({required String content, required String type}) async {
-    //var file = File("$key.pub");
     if(kIsWeb){
       var bytes = utf8.encode(content);
       WebDownloaderService.download(bytes, downloadName: "$type.txt");

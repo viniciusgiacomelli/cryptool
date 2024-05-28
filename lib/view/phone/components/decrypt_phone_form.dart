@@ -86,7 +86,7 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
   _handleDecrypt() async {
     String? errors;
     if(secretTextController.text == ""){
-      errors = "- Cole o texto secreto para decrifrar \n";
+      errors = "- Cole o texto secreto para descriptografar \n";
     }
     if(!_privateKey){
       errors = "$errors - Carregue uma chave privada";
@@ -106,7 +106,7 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
       );
       if(cleanText != null){
         cleanTextController.text = cleanText;
-      } else{
+      } else {
         _dialogBuilder(
             context: context,
             title: "Erro",
@@ -128,14 +128,21 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(child: Text("Texto criptografado")),
+                  Expanded(child: Text("Texto claro")),
+                ],
+              ),
+              Row(
                 children: [
                   Expanded(
                     child: TextFormField(
                       maxLines: 6,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: "Texto criptografado",
-                        hintText: "Insira o texto secreto",
+                        hintText: "Insira o texto criptografado",
                         contentPadding: EdgeInsets.symmetric(
                           vertical: 12,
                           horizontal: 8
@@ -153,7 +160,7 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                             title: "Texto claro",
                             content: cleanTextController.text != "" ?
                             cleanTextController.text :
-                            "Seu texto claro aparecerá aqui",
+                            "Seu texto descriptografado aparecerá aqui",
                             activeDownload: cleanTextController.text != "",
                             fileName: "clear_text",
                           field: cleanTextController
@@ -163,7 +170,7 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                       maxLines: 6,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        hintText: "Texto claro",
+                        hintText: "Seu texto descriptografado aparecerá aqui",
                         contentPadding: EdgeInsets.symmetric(
                           vertical: 12,
                           horizontal: 8
@@ -179,8 +186,15 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
-                      icon: Icon(Icons.upload, size: 20,),
-                      label: Text("Carregar ... "),
+                      icon: Icon(Icons.upload, size: 20, color: Colors.white,),
+                      label: Text("Carregar ... ", style: TextStyle(color: Colors.white),),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.indigoAccent,
+                          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)
+                          )
+                      ),
                       onPressed: () async {
                         String? secretText = await _cryptoService.uploadFile();
                         if(secretText != null){
@@ -197,7 +211,14 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                           onPressed: (){
                             _handleDecrypt();
                           },
-                          child: Text("Descriptografar")
+                          child: Text("Descriptografar", style: TextStyle(color: Colors.white),),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.indigoAccent,
+                            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)
+                            )
+                        ),
                       ),
                   )
                 ],
@@ -210,7 +231,9 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                       _dialogBuilder(
                           context: context,
                           title: _privateKey ? "Chave privada" : "Carregue uma chave",
-                        content: privateKeyTextController.text,
+                        content: privateKeyTextController.text != "" ?
+                          privateKeyTextController.text :
+                          "Carregue uma chave privada",
                         activeDownload: _privateKey,
                         fileName: "private_key",
                         field: privateKeyTextController
@@ -243,8 +266,15 @@ class _DecryptPhoneFormState extends State<DecryptPhoneForm> {
                     )
                   ),
                   ElevatedButton.icon(
-                    icon: Icon(Icons.upload, size: 20,),
-                    label: Text("Carregar ... "),
+                    icon: Icon(Icons.upload, size: 20, color: Colors.white,),
+                    label: Text("Carregar ", style: TextStyle(color: Colors.white),),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.indigoAccent,
+                        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)
+                        )
+                    ),
                     onPressed: () async {
                       String? publicKey = await _cryptoService.uploadFile();
                       if(publicKey != null){

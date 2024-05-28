@@ -1,4 +1,5 @@
 import 'package:cryptool/view/mini/components/mini_decrypt_phone_form.dart';
+import 'package:cryptool/view/phone/components/decrypt_phone_form.dart';
 import 'package:flutter/material.dart';
 
 import '../desktop/components/home_header.dart';
@@ -44,7 +45,7 @@ class _PhoneHomePageState extends State<PhoneHomePage> {
               HomeHeader(),
               <Widget>[
                 PhoneForm(),
-                MiniDecryptForm()
+                DecryptPhoneForm()
               ][currentPageIndex]
             ],
           )

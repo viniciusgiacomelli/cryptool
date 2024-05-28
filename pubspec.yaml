@@ -33,6 +33,7 @@ dependencies:
   fast_rsa: ^3.6.2
   get_it: ^7.7.0
   file_picker: ^8.0.3
+  google_fonts: ^6.2.1
 
 
   # The following adds the Cupertino Icons font to your application.

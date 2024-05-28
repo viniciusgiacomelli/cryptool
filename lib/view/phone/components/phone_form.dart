@@ -2,6 +2,7 @@ import 'package:cryptool/viewmodel/services/crypto_service.dart';
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 
 class PhoneForm extends StatefulWidget {
@@ -171,13 +172,20 @@ class _PhoneFormState extends State<PhoneForm> {
           child: Column(
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(child: Text("Texto claro")),
+                  Expanded(child: Text("Texto criptografado"))
+                ],
+              ),
+              Row(
                 children: [
                   Expanded(
                     child: TextFormField(
                       maxLines: 6,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: "Texto claro",
                         hintText: "Insira seu texto",
                         contentPadding: EdgeInsets.symmetric(
                           vertical: 12,
@@ -206,7 +214,7 @@ class _PhoneFormState extends State<PhoneForm> {
                       maxLines: 6,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        hintText: "Texto criptografado",
+                        hintText: "Seu texto criptografado aparecerá aqui",
                         contentPadding: EdgeInsets.symmetric(
                           vertical: 12,
                           horizontal: 8
@@ -253,7 +261,16 @@ class _PhoneFormState extends State<PhoneForm> {
                             var applied = await _applyCriptography();
                           }
                         },
-                        child: Text("Aplicar")
+                        child: Text("Aplicar", style: TextStyle(
+                            color: Colors.white
+                        ),),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.indigoAccent,
+                            padding: EdgeInsets.symmetric(vertical: 15),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)
+                            )
+                        ),
                     ),
                   ),
                 ],
@@ -262,20 +279,28 @@ class _PhoneFormState extends State<PhoneForm> {
               Visibility(
                 visible: _algorithm == "RSA",
                 child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.indigoAccent,
+                      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)
+                      )
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Gerar novo par de chaves"),
+                      Text("Gerar novo par de chaves", style: TextStyle(color: Colors.white),),
                       SizedBox( width: 8,),
                       _generating ?
                           SizedBox(
-                            height: 8,
-                            width: 8,
+                            height: 17,
+                            width: 17,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
+                              color: Colors.white,
                             ),
                           ) :
-                          SizedBox( width: 8,)
+                          Icon(Icons.cached_rounded, color: Colors.white,)
                     ],
                   ),
                   onPressed: () async {
@@ -321,13 +346,20 @@ class _PhoneFormState extends State<PhoneForm> {
                                     // Text("Gerar chave"),
                                   ),
                                 ),
-                                Text("Clique para abrir / carregar",
+                                Text("Clique para abrir",
                                   style: TextStyle(fontSize: 10),
                                 ),
                                 SizedBox(height: 6,),
                                 ElevatedButton.icon(
-                                  icon: Icon(Icons.upload, size: 20,),
-                                  label: Text("Carregar"),
+                                  icon: Icon(Icons.upload, size: 20, color: Colors.white,),
+                                  label: Text("Carregar", style: TextStyle(color: Colors.white),),
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.indigoAccent,
+                                      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8)
+                                      )
+                                  ),
                                   onPressed: () async {
                                     String? publicKey = await _cryptoService.uploadFile();
                                     if(publicKey != null){
@@ -374,11 +406,18 @@ class _PhoneFormState extends State<PhoneForm> {
                                     Icon( Icons.key_rounded, size: 80, color: Colors.black12,),
                                   ),
                                 ),
-                                Text("Clique para abrir / carregar", style: TextStyle(fontSize: 10),),
+                                Text("Clique para abrir", style: TextStyle(fontSize: 10),),
                                 SizedBox(height: 6,),
                                 ElevatedButton.icon(
-                                  icon: Icon( Icons.upload, size: 20,),
-                                  label: Text("Carregar"),
+                                  icon: Icon( Icons.upload, size: 20, color: Colors.white,),
+                                  label: Text("Carregar", style: TextStyle(color: Colors.white),),
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.indigoAccent,
+                                      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8)
+                                      )
+                                  ),
                                   onPressed: () async {
                                     await _handleUpload(
                                         controller: privateKeyTextController,

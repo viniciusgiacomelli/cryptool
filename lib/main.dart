@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
 
   Widget _handleScreen({ required double width}){
     switch(width){
-      case < 330:
+      case < 380:
         return MiniHomePage();
       case < 870 :
         return PhoneHomePage();
