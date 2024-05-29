@@ -17,7 +17,6 @@ class _MiniHomePageState extends State<MiniHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index){

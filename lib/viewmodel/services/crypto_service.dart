@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
-
+import 'dart:io' show Platform;
 import 'web_downloader_service.dart';
 
 class CryptoService {
@@ -56,7 +56,15 @@ class CryptoService {
   }
 
   Future<String?> uploadFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    var result;
+    if(kIsWeb){
+      FilePickerResult? result = await FilePicker.platform.pickFiles();
+    }else{
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['txt']
+      );
+    }
 
     if (result != null) {
       Uint8List? unit8List = result.files.single.bytes;

@@ -1,4 +1,3 @@
-import 'package:cryptool/view/mini/components/mini_decrypt_phone_form.dart';
 import 'package:cryptool/view/phone/components/decrypt_phone_form.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +17,6 @@ class _PhoneHomePageState extends State<PhoneHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index){

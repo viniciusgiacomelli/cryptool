@@ -1,0 +1,42 @@
+name: 🚀 Deploy flutter web
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      tag_version: ${{ steps.tag_version.outputs.new_version }}
+
+    steps:
+      - name: ☑️ Checkout
+        uses: actions/checkout@v1
+
+      - name: ♾️ Setup Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+
+      - name: 📥 Install dependencies
+        run: flutter pub get
+
+      - name: 🛠️ Build Web
+        run: flutter build web --webrenderer html
+
+      - name: 🚀 Deploy
+        env:
+          TAG:${{steps.build.outputs.tag_version}}
+        run: |
+          cd build/web
+          git init
+          git config --global user.email giacomelli.vinicius@gmail.com
+          git config --global user.name viniciusgiacomelli
+          git status
+          git remote add origin https://${{secrets.token}}@github.com/viniciusgiacomelli/cryptool-web.github.io.git
+          git checkout -b gh-pages
+          git add --all
+          git commit -m "deploy_$TAG"
+          git push origin -u gh-pages -f
