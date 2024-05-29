@@ -33,7 +33,7 @@ jobs:
           git config --global user.email giacomelli.vinicius@gmail.com
           git config --global user.name viniciusgiacomelli
           git status
-          git remote add origin https://github.com/viniciusgiacomelli/cryptool-web
+          git remote add origin https://${{secrets.TOKEN}}@github.com/viniciusgiacomelli/cryptool-web
           git checkout -b gh-pages
           git add .
           git commit -m "deploy_${{steps.build.outputs.tag_version}}"
