@@ -35,6 +35,6 @@ jobs:
           git status
           git remote add origin https://$GH_TOKEN@github.com/viniciusgiacomelli/cryptool-web.github.io.git
           git checkout -b gh-pages
-          git add --all
+          git add .
           git commit -m "deploy_${{steps.build.outputs.tag_version}}"
           git push origin -u gh-pages -f
