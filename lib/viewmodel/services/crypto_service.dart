@@ -56,11 +56,11 @@ class CryptoService {
   }
 
   Future<String?> uploadFile() async {
-    var result;
+    FilePickerResult? result;
     if(kIsWeb){
-      FilePickerResult? result = await FilePicker.platform.pickFiles();
+       result = await FilePicker.platform.pickFiles();
     }else{
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['txt']
       );
