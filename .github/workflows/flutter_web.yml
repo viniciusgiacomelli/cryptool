@@ -24,7 +24,7 @@ jobs:
         run: flutter pub get
 
       - name: 🛠️ Build Web
-        run: flutter build web --webrenderer html
+        run: flutter build web --web-renderer html
 
       - name: 🚀 Deploy
         env:
