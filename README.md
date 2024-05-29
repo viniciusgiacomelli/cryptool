@@ -170,4 +170,6 @@ O site está hospedado em:
 - 🔣 Geração de Hash da mensagem
 
 ## Layout Web
-[![print_1](https://github.com/viniciusgiacomelli/cryptool/blob/00fd9771c38c3ada47d502d9acabc9988b1a1341/images/print_1.png)](#)
+[![print_1](https://github.com/viniciusgiacomelli/cryptool/blob/00fd9771c38c3ada47d502d9acabc9988b1a1341/images/print_1.png)](https://viniciusgiacomelli.github.io/cryptool-web/)
+
+[![]()](#)
