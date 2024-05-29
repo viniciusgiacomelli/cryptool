@@ -27,8 +27,6 @@ jobs:
         run: flutter build web --web-renderer html
 
       - name: 🚀 Deploy
-        env:
-          TAG:${{steps.build.outputs.tag_version}}
         run: |
           cd build/web
           git init
@@ -38,5 +36,5 @@ jobs:
           git remote add origin https://${{secrets.token}}@github.com/viniciusgiacomelli/cryptool-web.github.io.git
           git checkout -b gh-pages
           git add --all
-          git commit -m "deploy_$TAG"
+          git commit -m "deploy_${{steps.build.outputs.tag_version}}"
           git push origin -u gh-pages -f
