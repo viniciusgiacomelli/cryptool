@@ -11,7 +11,8 @@
  Repare como seu olhar, apesar de tensao, nao demonstra medo. 
  Os olhos de Davi estao voltados para Roma.
 
- [](https://pt.wikipedia.org/wiki/David_(Michelangelo)#/media/Ficheiro:'David'_by_Michelangelo_Fir_JBU013.jpg)
+ Copie o link abaixo e cole no seu navegador para ver uma foto >>
+ https://pt.wikipedia.org/wiki/David_(Michelangelo)#/media/Ficheiro:'David'_by_Michelangelo_Fir_JBU013.jpg
 
  
                                     **   **
@@ -172,4 +173,4 @@ O site está hospedado em:
 ## Layout Web
 [![print_1](https://github.com/viniciusgiacomelli/cryptool/blob/00fd9771c38c3ada47d502d9acabc9988b1a1341/images/print_1.png)](https://viniciusgiacomelli.github.io/cryptool-web/)
 
-[![]()](#)
+[![print_2](https://github.com/viniciusgiacomelli/cryptool/blob/997945504640ef4f5e4d492e2f68a5516821e211/images/print_2.png)](https://viniciusgiacomelli.github.io/cryptool-web/)
