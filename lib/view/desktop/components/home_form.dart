@@ -346,8 +346,8 @@ class _HomeFormState extends State<HomeForm> {
                                         ),
                                         child: Center(
                                           child: _publicKey ?
-                                          Icon( Icons.key_rounded, size: 80,) :
-                                          Icon( Icons.key_rounded, size: 80, color: Colors.black12,),
+                                          Icon( Icons.lock_rounded, size: 80,) :
+                                          Icon( Icons.lock_rounded, size: 80, color: Colors.black12,),
                                           // Text("Gerar chave"),
                                         ),
                                       ), // ChaveIcon
@@ -359,7 +359,7 @@ class _HomeFormState extends State<HomeForm> {
                                               child: Text("Chave publica",
                                                 style: TextStyle(
                                                     fontSize: 25,
-                                                    fontWeight: FontWeight.w200
+                                                    fontWeight: FontWeight.bold
                                                 ),
                                               ),
                                             ),
@@ -511,8 +511,8 @@ class _HomeFormState extends State<HomeForm> {
                                         ),
                                         child: Center(
                                           child: _privateKey ?
-                                          Icon( Icons.lock, size: 80,) :
-                                          Icon( Icons.lock, size: 80, color: Colors.black12,),
+                                          Icon( Icons.key_rounded, size: 80,) :
+                                          Icon( Icons.key_rounded, size: 80, color: Colors.black12,),
                                           // Text("Gerar chave"),
                                         ),
                                       ), // ChaveIcon
@@ -524,7 +524,7 @@ class _HomeFormState extends State<HomeForm> {
                                               child: Text("Chave privada",
                                                 style: TextStyle(
                                                     fontSize: 25,
-                                                    fontWeight: FontWeight.w200
+                                                    fontWeight: FontWeight.bold
                                                 ),
                                               ),
                                             ),
