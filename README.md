@@ -168,7 +168,11 @@ O site está hospedado em:
 - 📤 Upload de chaves individualmente
 - 📥 Download das chaves
 - 🔠 Descriptografia da mensagem utilizando a chave privada
-- 🔣 Geração de Hash da mensagem
+- 🔣 Geração de Hash da mensagem   
+
+## Layout Mobile
+[![print_mobile_1](https://github.com/viniciusgiacomelli/cryptool/blob/320f05d3857dea69aaef9880580e0bcddd8805d7/images/print_mobile_1.png)](https://viniciusgiacomelli.github.io/cryptool-web/)
+[![print_mobile_2](https://github.com/viniciusgiacomelli/cryptool/blob/320f05d3857dea69aaef9880580e0bcddd8805d7/images/print_mobile_2.png)](https://viniciusgiacomelli.github.io/cryptool-web/)
 
 ## Layout Web
 [![print_1](https://github.com/viniciusgiacomelli/cryptool/blob/00fd9771c38c3ada47d502d9acabc9988b1a1341/images/print_1.png)](https://viniciusgiacomelli.github.io/cryptool-web/)
