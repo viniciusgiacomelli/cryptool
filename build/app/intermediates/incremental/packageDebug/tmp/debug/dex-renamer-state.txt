@@ -1,0 +1,4 @@
+#Thu May 30 09:49:16 BRT 2024
+base.0=C\:\\Users\\giaco\\Workspaces\\blueteam_sec\\projects\\cryptool\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
