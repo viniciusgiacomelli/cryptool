@@ -1,9 +1,9 @@
 import 'dart:convert';
 
+import 'dart:io' show Platform;
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
-import 'dart:io' show Platform;
 import 'web_downloader_service.dart';
 
 class CryptoService {

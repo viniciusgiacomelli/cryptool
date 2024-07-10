@@ -10,16 +10,35 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          child: Column(
-            children: [
-              HomeHeader(),
-              HomeForm()
-            ],
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: HomeHeader(),
+          bottom: const TabBar(
+              tabs: [
+                Tab( child: Text("AES", style: TextStyle(color: Colors.amber),),),
+                Tab( text: "RSA",),
+                Tab( text: "HASH",),
+              ]
           ),
         ),
+        body: TabBarView(
+          children: [
+            HomeForm(),
+            HomeForm(),
+            HomeForm(),
+          ],
+        ),
+        // body: SingleChildScrollView(
+        //   child: Container(
+        //     child: Column(
+        //       children: [
+        //         HomeForm()
+        //       ],
+        //     ),
+        //   ),
+        // )
       )
     );
   }
