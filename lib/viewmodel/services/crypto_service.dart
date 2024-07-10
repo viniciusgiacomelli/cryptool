@@ -14,23 +14,14 @@ class CryptoService {
   }
 
   Future<String?> cryptograph({
-    required String algorithm,
     required String message,
     String? publicKey
   }) async {
-    switch(algorithm){
-      case "RSA":
-        try{
-          var result = await RSA.encryptPKCS1v15(message,publicKey!);
-          return result;
-        } on Exception {
-         return "ERRO! - Não foi possível criptografar corretamente a mensagem";
-        }
-      case "AES":
-        var result = await RSA.hash(message, Hash.SHA512);
-        return result;
-      default:
-        return null;
+    try{
+      var result = await RSA.encryptPKCS1v15(message,publicKey!);
+      return result;
+    } on Exception {
+      return "ERRO! - Não foi possível criptografar corretamente a mensagem";
     }
   }
 

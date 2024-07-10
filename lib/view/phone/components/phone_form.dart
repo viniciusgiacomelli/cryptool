@@ -86,7 +86,6 @@ class _PhoneFormState extends State<PhoneForm> {
     } else {
       var publicKey = await _getPublicKey();
       var secret = await _cryptoService.cryptograph(
-          algorithm: _algorithm,
           message: cleanTextController.text,
           publicKey: _algorithm == "RSA" ? publicKey : null
       );

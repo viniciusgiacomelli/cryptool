@@ -22,10 +22,7 @@ class _HomeFormState extends State<HomeForm> {
   final TextEditingController secretTextController     = TextEditingController();
   final TextEditingController publicKeyTextController  = TextEditingController();
   final TextEditingController privateKeyTextController = TextEditingController();
-  final TextEditingController aesKeyTextController     = TextEditingController();
 
-  List<String> algorithms = <String>["RSA", "AES"];
-  late String _algorithm;
   bool _privateKey = false;
   bool _publicKey = false;
   bool _generating = false;
@@ -34,8 +31,6 @@ class _HomeFormState extends State<HomeForm> {
   void initState() {
     _cryptoService = getIt.get<CryptoService>();
     _cryptoServiceAes = getIt.get<CryptoServiceAes>();
-    _algorithm = algorithms[0];
-
     super.initState();
   }
 
@@ -44,7 +39,6 @@ class _HomeFormState extends State<HomeForm> {
     secretTextController.text = "";
     publicKeyTextController.text = "";
     privateKeyTextController.text = "";
-    aesKeyTextController.text = "";
     setState(() {
       _privateKey = false;
       _publicKey = false;
@@ -99,18 +93,9 @@ class _HomeFormState extends State<HomeForm> {
   }
 
   Future<bool> _applyCriptography() async {
-    if(_algorithm == "AES"){
-      var secret = _cryptoServiceAes.encrypt(
-          message: cleanTextController.text,
-          secret: aesKeyTextController.text
-      );
-      secretTextController.text = secret;
-    }
     var publicKey = await _getPublicKey();
     var secret = await _cryptoService.cryptograph(
-        algorithm: _algorithm,
         message: cleanTextController.text,
-        publicKey: _algorithm == "RSA" ? publicKey : null
     );
     if(secret != null){
       secretTextController.text = secret;
@@ -286,7 +271,6 @@ class _HomeFormState extends State<HomeForm> {
                     ],
                   ),
                   SizedBox(height: 15,),
-                  _algorithm == "RSA" ?
                   Row(
                     children: [
                       Expanded(
@@ -415,42 +399,39 @@ class _HomeFormState extends State<HomeForm> {
                         flex: 1,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Visibility(
-                            visible: _algorithm == "RSA",
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.indigoAccent,
-                                  padding: EdgeInsets.symmetric(vertical: 15),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8)
-                                  )
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text("Gerar novo par\n de chaves",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold
-                                    ),
-                                  ),
-                                  SizedBox( width: 8,),
-                                  _generating ?
-                                  SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 3,
-                                      color: Colors.white,
-                                    ),
-                                  ) :
-                                  Icon(Icons.cached_rounded, color: Colors.white,)
-                                ],
-                              ),
-                              onPressed: () async {
-                                await _generateKeyPair();
-                              },
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.indigoAccent,
+                                padding: EdgeInsets.symmetric(vertical: 15),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8)
+                                )
                             ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Gerar novo par\n de chaves",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                                SizedBox( width: 8,),
+                                _generating ?
+                                SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 3,
+                                    color: Colors.white,
+                                  ),
+                                ) :
+                                Icon(Icons.cached_rounded, color: Colors.white,)
+                              ],
+                            ),
+                            onPressed: () async {
+                              await _generateKeyPair();
+                            },
                           ),
                         ),
                       ),
@@ -576,55 +557,6 @@ class _HomeFormState extends State<HomeForm> {
                             ),
                           )
                       ),
-      
-                    ],
-                  ) :
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 4,
-                        child: TextFormField(
-                          maxLines: 2,
-                          decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: "Segredo",
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 12,
-                                  horizontal: 8
-                              )
-                          ),
-                          controller: aesKeyTextController,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                          child: Column(
-                            children: [
-                              ElevatedButton.icon(
-                              onPressed: (){
-                                _handleDecrypt();
-                                },
-                                  label: Text("Gerar segredo",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white
-                                    ),
-                                  ),
-                                  icon: Icon(Icons.cached_rounded,
-                                    color: Colors.white,
-                                    textDirection: TextDirection.ltr,
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.indigoAccent,
-                                      padding: EdgeInsets.all(15),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8)
-                                      )
-                                  ),
-                                ),
-                            ],
-                          )
-                      )
                     ],
                   )
                 ],
