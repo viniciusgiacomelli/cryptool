@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'components/desktop_aes_form.dart';
 import 'components/home_form.dart';
 import 'components/home_header.dart';
 
@@ -17,8 +18,8 @@ class HomePage extends StatelessWidget {
           title: HomeHeader(),
           bottom: const TabBar(
               tabs: [
-                Tab( child: Text("AES", style: TextStyle(color: Colors.amber),),),
-                Tab( text: "RSA",),
+                Tab( child: Text("RSA", style: TextStyle(color: Colors.amber),),),
+                Tab( text: "AES",),
                 Tab( text: "HASH",),
               ]
           ),
@@ -26,7 +27,7 @@ class HomePage extends StatelessWidget {
         body: TabBarView(
           children: [
             HomeForm(),
-            HomeForm(),
+            DesktopAesForm(),
             HomeForm(),
           ],
         ),
