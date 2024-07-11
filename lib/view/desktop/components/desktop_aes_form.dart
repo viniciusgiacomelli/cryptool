@@ -1,4 +1,10 @@
+import 'dart:math';
+import 'dart:typed_data';
+
+import 'package:cryptool/viewmodel/services/cripto_service_aes.dart';
+import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class DesktopAesForm extends StatefulWidget {
@@ -9,11 +15,47 @@ class DesktopAesForm extends StatefulWidget {
 }
 
 class _DesktopAesFormState extends State<DesktopAesForm> {
+  GetIt getIt = GetIt.instance;
+  late CryptoServiceAes _cryptoServiceAes;
+
   final _formKey = GlobalKey<FormState>();
+
 
   final TextEditingController cleanTextController      = TextEditingController();
   final TextEditingController secretTextController     = TextEditingController();
   final TextEditingController keyController            = TextEditingController();
+  Encrypted encrypted = Encrypted(Uint8List(2));
+
+  @override
+  void initState() {
+    _cryptoServiceAes = getIt.get<CryptoServiceAes>();
+    super.initState();
+  }
+
+  _handleEncrypt(){
+    Encrypted secret = _cryptoServiceAes.encrypt(
+        message: cleanTextController.text,
+        secret: keyController.text
+    );
+    encrypted = secret;
+    secretTextController.text = secret.base64;
+  }
+
+  _handleDecrypt(){
+    String cleanText = _cryptoServiceAes.decrypt(
+        encrypted: encrypted,
+        secret: keyController.text
+    );
+    cleanTextController.text = cleanText;
+  }
+
+  _handleGenerateKey(){
+    Random _rnd = Random();
+    var _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    String key = String.fromCharCodes(Iterable.generate(32, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+    keyController.text = key;
+  }
+
 
 
   @override
@@ -72,8 +114,8 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
                             child: Directionality(
                               textDirection: TextDirection.rtl,
                               child: ElevatedButton.icon(
-                                onPressed: () async {
-
+                                onPressed: () {
+                                  _handleEncrypt();
                                 },
                                 label: Text("Criptografar",
                                   style: TextStyle(
@@ -101,7 +143,7 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
                               width: double.maxFinite,
                               child: ElevatedButton.icon(
                                 onPressed: (){
-
+                                  _handleDecrypt();
                                 },
                                 label: Text("Descriptografar",
                                   style: TextStyle(
@@ -144,6 +186,50 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
                   ),
                 ],
               ),
+              SizedBox( height: 32,),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: TextFormField(
+                      maxLines: 1,
+                      maxLength: 32,
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: "Insira sua chave",
+                      ),
+                      controller: keyController,
+                    ),
+                  ),
+                  SizedBox( width: 8,),
+                  Expanded(
+                    flex: 1,
+                    child: ElevatedButton.icon(
+                      onPressed: () async {
+                        _handleGenerateKey();
+                      },
+                      label: Text("Gerar nova chave",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white
+                        ),
+                      ),
+                      icon: Icon(
+                        Icons.cached_rounded,
+                        color: Colors.white,
+                      ),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.indigoAccent,
+                          padding: EdgeInsets.symmetric(vertical: 20),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)
+                          )
+                      ),
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),
