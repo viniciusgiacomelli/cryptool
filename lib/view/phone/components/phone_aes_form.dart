@@ -1,5 +1,7 @@
-import 'package:cryptool/viewmodel/services/crypto_service.dart';
-import 'package:fast_rsa/fast_rsa.dart';
+import 'dart:typed_data';
+
+import 'package:cryptool/viewmodel/services/cripto_service_aes.dart';
+import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -12,24 +14,45 @@ class PhoneAesForm extends StatefulWidget {
 
 class _PhoneAesFormState extends State<PhoneAesForm> {
   GetIt getIt = GetIt.instance;
-  late CryptoService _cryptoService;
+  late CryptoServiceAes _cryptoServiceAes;
 
   final _formKey = GlobalKey<FormState>();
   final TextEditingController cleanTextController      = TextEditingController();
   final TextEditingController secretTextController     = TextEditingController();
-  final TextEditingController publicKeyTextController  = TextEditingController();
-  final TextEditingController privateKeyTextController = TextEditingController();
+  final TextEditingController keyController  = TextEditingController();
 
   List<String> algorithms = <String>["512", "256"];
   late String _algorithm;
+  Encrypted encrypted = Encrypted(Uint8List(2));
 
   @override
   void initState() {
-    _cryptoService = getIt.get<CryptoService>();
+    _cryptoServiceAes = getIt.get<CryptoServiceAes>();
     _algorithm = algorithms[0];
     super.initState();
   }
 
+  _handleEncrypt(){
+    Encrypted secret = _cryptoServiceAes.encrypt(
+        message: cleanTextController.text,
+        secret: keyController.text
+    );
+    encrypted = secret;
+    secretTextController.text = secret.base64;
+  }
+
+  _handleDecrypt(){
+    String cleanText = _cryptoServiceAes.decrypt(
+        encrypted: encrypted,
+        secret: keyController.text
+    );
+    cleanTextController.text = cleanText;
+  }
+
+  _handleGenerateKey(){
+    String key = _cryptoServiceAes.generateKey();
+    keyController.text = key;
+  }
 
   Future<void> _dialogBuilder({
     required BuildContext context,
@@ -64,10 +87,6 @@ class _PhoneAesFormState extends State<PhoneAesForm> {
               icon: Icon(Icons.download),
                 label: Text("Baixar"),
                 onPressed: activeDownload ?  (){
-                  _cryptoService.save(
-                      content: content,
-                      type: fileName
-                  );
                   Navigator.of(context).pop();
                 } : null,
             ),
@@ -120,19 +139,6 @@ class _PhoneAesFormState extends State<PhoneAesForm> {
                   SizedBox(width: 8,),
                   Expanded(
                     child: TextFormField(
-                      onTap: (){
-                        _dialogBuilder(
-                          context: context,
-                          title: "Texto criptografado",
-                          content: secretTextController.text != "" ?
-                            secretTextController.text :
-                            "Seu texto criptografado aparecerá aqui",
-                          activeDownload: secretTextController.text != "",
-                          fileName: _algorithm == "RSA" ? "secret_text" : "hash",
-                          field: secretTextController
-                        );
-                      },
-                      readOnly: true,
                       maxLines: 6,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
@@ -152,9 +158,28 @@ class _PhoneAesFormState extends State<PhoneAesForm> {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () async {
+                      onPressed: (){
+                        _handleEncrypt();
                       },
-                      child: Text("Aplicar", style: TextStyle(
+                      child: Text("Critpografar", style: TextStyle(
+                          color: Colors.white
+                      ),),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.indigoAccent,
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)
+                          )
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 6,),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: (){
+                        _handleDecrypt();
+                      },
+                      child: Text("Descriptografar", style: TextStyle(
                           color: Colors.white
                       ),),
                       style: ElevatedButton.styleFrom(
@@ -171,49 +196,42 @@ class _PhoneAesFormState extends State<PhoneAesForm> {
               SizedBox(height: 16.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
+                    flex: 3,
                     child: TextFormField(
-                      onTap: (){
-                        _dialogBuilder(
-                            context: context,
-                            title: "Secret key",
-                            content: secretTextController.text != "" ?
-                            secretTextController.text :
-                            "Insira seu segredo",
-                            activeDownload: secretTextController.text != "",
-                            fileName: _algorithm == "RSA" ? "secret_text" : "hash",
-                            field: secretTextController
-                        );
-                      },
-                      readOnly: true,
                       maxLines: 1,
+                      maxLength: 32,
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          hintText: "Seu texto criptografado aparecerá aqui",
+                          hintText: "Chave secreta",
                           contentPadding: EdgeInsets.symmetric(
                               vertical: 12,
                               horizontal: 8
                           )
                       ),
-                      controller: secretTextController,
+                      controller: keyController,
                     ),
                   ),
-                  SizedBox( width: 12,),
+                  SizedBox(width: 6,),
                   Expanded(
-                    child: ElevatedButton(
-                        onPressed: () async {
-                        },
-                        child: Text("Gerar secret", style: TextStyle(
-                            color: Colors.white
-                        ),),
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.indigoAccent,
-                            padding: EdgeInsets.symmetric(vertical: 15),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8)
-                            )
-                        ),
+                    flex: 1,
+                    child: ElevatedButton.icon(
+                      icon: Icon(Icons.cached_rounded, color: Colors.white,),
+                      onPressed: (){
+                        _handleGenerateKey();
+                      },
+                      label: Text("Gerar \n secret", style: TextStyle(
+                          color: Colors.white
+                      ),),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.indigoAccent,
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)
+                          )
+                      ),
                     ),
                   ),
                 ],

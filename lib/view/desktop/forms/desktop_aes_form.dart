@@ -20,8 +20,6 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
 
   final _formKey = GlobalKey<FormState>();
 
-  List<String> hashes = ["512"];
-
   final TextEditingController cleanTextController      = TextEditingController();
   final TextEditingController secretTextController     = TextEditingController();
   final TextEditingController keyController            = TextEditingController();
@@ -51,9 +49,7 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
   }
 
   _handleGenerateKey(){
-    Random _rnd = Random();
-    var _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    String key = String.fromCharCodes(Iterable.generate(32, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+    String key = _cryptoServiceAes.generateKey();
     keyController.text = key;
   }
 
