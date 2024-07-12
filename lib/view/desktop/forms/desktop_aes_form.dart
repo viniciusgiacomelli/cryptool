@@ -24,17 +24,22 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
   final TextEditingController secretTextController     = TextEditingController();
   final TextEditingController keyController            = TextEditingController();
   Encrypted encrypted = Encrypted(Uint8List(2));
+  List<String> algorithms = <String>["256", "192", "128"];
+  late String _algorithm;
+  late int _length;
 
   @override
   void initState() {
     _cryptoServiceAes = getIt.get<CryptoServiceAes>();
+    _algorithm = algorithms[0];
+    _length = 32;
     super.initState();
   }
 
   _handleEncrypt(){
     Encrypted secret = _cryptoServiceAes.encrypt(
         message: cleanTextController.text,
-        secret: keyController.text
+        secret: keyController.text,
     );
     encrypted = secret;
     secretTextController.text = secret.base64;
@@ -49,8 +54,27 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
   }
 
   _handleGenerateKey(){
-    String key = _cryptoServiceAes.generateKey();
+    String key = _cryptoServiceAes.generateKey(length: _length);
     keyController.text = key;
+  }
+
+  _handleChangeLength(String? algorithm){
+    int length = 32;
+    switch(algorithm){
+      case "256":
+        length = 32;
+      case "192":
+        length = 24;
+      case "128":
+        length = 16;
+    }
+    setState(() {
+      _algorithm = algorithm!;
+      _length = length;
+      cleanTextController.text = "";
+      secretTextController.text = "";
+      keyController.text = "";
+    });
   }
 
   @override
@@ -185,14 +209,41 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(
+                    width: 200,
+                    child: DropdownButton(
+                      iconSize: 40.0,
+                      isExpanded: true,
+                      isDense: true,
+                      iconEnabledColor: Colors.deepPurple,
+                      padding: EdgeInsets.symmetric(horizontal: 15.0),
+                      borderRadius: BorderRadius.circular(10),
+                      items: algorithms.map<DropdownMenuItem<String>>((String? algorithm) =>
+                          DropdownMenuItem<String>(
+                              value:algorithm,
+                              child: Text("Chave $algorithm bits")
+                          )
+                      ).toList(),
+                      value: _algorithm,
+                      onChanged: (String? algorithm){
+                        _handleChangeLength(algorithm);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox( height: 8,),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Expanded(
                     flex: 2,
                     child: TextFormField(
                       maxLines: 1,
-                      maxLength: 32,
+                      maxLength: _length,
                       decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: "Insira sua chave",
+                        border: OutlineInputBorder(),
+                        hintText: "Insira sua chave",
                       ),
                       controller: keyController,
                     ),

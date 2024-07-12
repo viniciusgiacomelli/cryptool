@@ -17,7 +17,6 @@ class CryptoServiceAes{
 
   decrypt({required Encrypted encrypted, required String secret}){
     try{
-      //String cypher = String.fromCharCodes(base64Decode(message));
       final key = Key.fromUtf8(secret);
       final iv = IV.allZerosOfLength(16);
 
@@ -30,10 +29,15 @@ class CryptoServiceAes{
     }
   }
 
-  String generateKey(){
+  String generateKey({int? length}){
     Random _rnd = Random();
     var _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    String key = String.fromCharCodes(Iterable.generate(32, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+    String key = String.fromCharCodes(
+        Iterable.generate(
+            length ?? 32,
+            (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))
+        )
+    );
     return key;
   }
 

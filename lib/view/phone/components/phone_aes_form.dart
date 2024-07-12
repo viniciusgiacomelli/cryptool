@@ -15,20 +15,22 @@ class PhoneAesForm extends StatefulWidget {
 class _PhoneAesFormState extends State<PhoneAesForm> {
   GetIt getIt = GetIt.instance;
   late CryptoServiceAes _cryptoServiceAes;
-
   final _formKey = GlobalKey<FormState>();
+
   final TextEditingController cleanTextController      = TextEditingController();
   final TextEditingController secretTextController     = TextEditingController();
   final TextEditingController keyController  = TextEditingController();
 
-  List<String> algorithms = <String>["512", "256"];
+  List<String> algorithms = <String>["256", "192", "128"];
   late String _algorithm;
+  late int _length;
   Encrypted encrypted = Encrypted(Uint8List(2));
 
   @override
   void initState() {
     _cryptoServiceAes = getIt.get<CryptoServiceAes>();
     _algorithm = algorithms[0];
+    _length = 32;
     super.initState();
   }
 
@@ -50,8 +52,27 @@ class _PhoneAesFormState extends State<PhoneAesForm> {
   }
 
   _handleGenerateKey(){
-    String key = _cryptoServiceAes.generateKey();
+    String key = _cryptoServiceAes.generateKey(length: _length);
     keyController.text = key;
+  }
+
+  _handleChangeLength(String? algorithm){
+    int length = 32;
+    switch(algorithm){
+      case "256":
+        length = 32;
+      case "192":
+        length = 24;
+      case "128":
+        length = 16;
+    }
+    setState(() {
+      _algorithm = algorithm!;
+      _length = length;
+      cleanTextController.text = "";
+      secretTextController.text = "";
+      keyController.text = "";
+    });
   }
 
   Future<void> _dialogBuilder({
@@ -195,14 +216,12 @@ class _PhoneAesFormState extends State<PhoneAesForm> {
               ),
               SizedBox(height: 16.0),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     flex: 3,
                     child: TextFormField(
                       maxLines: 1,
-                      maxLength: 32,
+                      maxLength: _length,
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: "Chave secreta",
@@ -214,6 +233,32 @@ class _PhoneAesFormState extends State<PhoneAesForm> {
                       controller: keyController,
                     ),
                   ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: DropdownButton(
+                      iconSize: 40.0,
+                      isExpanded: true,
+                      isDense: true,
+                      iconEnabledColor: Colors.deepPurple,
+                      padding: EdgeInsets.symmetric(horizontal: 15.0),
+                      borderRadius: BorderRadius.circular(10),
+                      items: algorithms.map<DropdownMenuItem<String>>((String? algorithm) =>
+                          DropdownMenuItem<String>(
+                              value:algorithm,
+                              child: Text("Chave $algorithm bits")
+                          )
+                      ).toList(),
+                      value: _algorithm,
+                      onChanged: (String? algorithm){
+                        _handleChangeLength(algorithm);
+                      },
+                    ),
+                  ),
                   SizedBox(width: 6,),
                   Expanded(
                     flex: 1,
@@ -222,7 +267,7 @@ class _PhoneAesFormState extends State<PhoneAesForm> {
                       onPressed: (){
                         _handleGenerateKey();
                       },
-                      label: Text("Gerar \n secret", style: TextStyle(
+                      label: Text("Gerar secret", style: TextStyle(
                           color: Colors.white
                       ),),
                       style: ElevatedButton.styleFrom(

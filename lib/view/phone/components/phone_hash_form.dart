@@ -237,7 +237,7 @@ class _PhoneHashFormState extends State<PhoneHashForm> {
                       items: algorithms.map<DropdownMenuItem<String>>((String? brandValue) =>
                           DropdownMenuItem<String>(
                               value:brandValue,
-                              child: Text("$brandValue")
+                              child: Text("Hash $brandValue bytes")
                           )
                       ).toList(),
                       value: _algorithm,
