@@ -1,4 +1,6 @@
 import 'package:cryptool/view/phone/components/decrypt_phone_form.dart';
+import 'package:cryptool/view/phone/components/phone_aes_form.dart';
+import 'package:cryptool/view/phone/components/phone_hash_form.dart';
 import 'package:flutter/material.dart';
 
 import '../global/components/home_header.dart';
@@ -28,12 +30,16 @@ class _PhoneHomePageState extends State<PhoneHomePage> {
         selectedIndex: currentPageIndex,
         destinations: <Widget>[
           NavigationDestination(
-              icon: Icon(Icons.lock,),
-              label: 'Criptografar'
+              icon: Icon(Icons.private_connectivity_rounded,),
+              label: 'RSA'
           ),
           NavigationDestination(
-              icon: Icon(Icons.lock_open),
-              label: 'Descriptografar'
+              icon: Icon(Icons.lock_reset_rounded),
+              label: 'AES'
+          ),
+          NavigationDestination(
+              icon: Icon(Icons.lock),
+              label: 'Hash'
           )
         ],
       ),
@@ -43,7 +49,8 @@ class _PhoneHomePageState extends State<PhoneHomePage> {
               HomeHeader(),
               <Widget>[
                 PhoneForm(),
-                DecryptPhoneForm()
+                PhoneAesForm(),
+                PhoneHashForm(),
               ][currentPageIndex]
             ],
           )
