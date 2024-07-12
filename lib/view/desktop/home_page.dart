@@ -1,3 +1,4 @@
+import 'package:cryptool/view/desktop/components/desktop_hash_form.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -28,7 +29,7 @@ class HomePage extends StatelessWidget {
           children: [
             HomeForm(),
             DesktopAesForm(),
-            HomeForm(),
+            DesktopHashForm(),
           ],
         ),
         // body: SingleChildScrollView(

@@ -20,6 +20,7 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
 
   final _formKey = GlobalKey<FormState>();
 
+  List<String> hashes = ["512"];
 
   final TextEditingController cleanTextController      = TextEditingController();
   final TextEditingController secretTextController     = TextEditingController();
@@ -55,8 +56,6 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
     String key = String.fromCharCodes(Iterable.generate(32, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
     keyController.text = key;
   }
-
-
 
   @override
   Widget build(BuildContext context) {

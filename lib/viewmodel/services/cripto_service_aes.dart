@@ -15,13 +15,18 @@ class CryptoServiceAes{
   }
 
   decrypt({required Encrypted encrypted, required String secret}){
-    //String cypher = String.fromCharCodes(base64Decode(message));
-    final key = Key.fromUtf8(secret);
-    final iv = IV.allZerosOfLength(16);
+    try{
+      //String cypher = String.fromCharCodes(base64Decode(message));
+      final key = Key.fromUtf8(secret);
+      final iv = IV.allZerosOfLength(16);
 
-    final encrypter = Encrypter(AES(key, mode: AESMode.cbc));
+      final encrypter = Encrypter(AES(key, mode: AESMode.cbc));
 
-    final plainMessage = encrypter.decrypt(encrypted, iv:iv);
-    return plainMessage;
+      final plainMessage = encrypter.decrypt(encrypted, iv:iv);
+      return plainMessage;
+    }catch(e){
+      return "Nao foi possivel descriptografar a mensagem";
+    }
   }
+
 }
