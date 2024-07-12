@@ -1,4 +1,5 @@
 import 'package:cryptool/viewmodel/services/crypto_service.dart';
+import 'package:cryptool/viewmodel/services/crypto_service_hash.dart';
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -12,7 +13,7 @@ class PhoneHashForm extends StatefulWidget {
 
 class _PhoneHashFormState extends State<PhoneHashForm> {
   GetIt getIt = GetIt.instance;
-  late CryptoService _cryptoService;
+  late CryptoServiceHash _cryptoServiceHash;
 
   final _formKey = GlobalKey<FormState>();
   final TextEditingController cleanTextController      = TextEditingController();
@@ -20,144 +21,23 @@ class _PhoneHashFormState extends State<PhoneHashForm> {
   final TextEditingController publicKeyTextController  = TextEditingController();
   final TextEditingController privateKeyTextController = TextEditingController();
 
-  List<String> algorithms = <String>["512", "256"];
-  late String _algorithm;
-  bool _publicKey = false;
-  bool _privateKey = false;
-  bool _generating = false;
+  List<String> hashes = <String>["512 bytes", "256 bytes", "MD5"];
+  late String _hash;
 
   @override
   void initState() {
-    _cryptoService = getIt.get<CryptoService>();
-    _algorithm = algorithms[0];
+    _cryptoServiceHash = getIt.get<CryptoServiceHash>();
+    _hash = hashes[0];
     super.initState();
   }
 
-  Future<String?> _generateKeyPair() async {
-    setState(() {
-      _generating = true;
-    });
-    KeyPair keyPair = await _cryptoService.generateKeryPair();
-    setState(() {
-      privateKeyTextController.text = keyPair.privateKey;
-      publicKeyTextController.text = keyPair.publicKey;
-      _privateKey = true;
-      _publicKey = true;
-      _generating = false;
-    });
-    return null;
-  }
 
-  Future<bool> _handleUpload({
-    required TextEditingController controller,
-    required String field
-  }) async {
-    String? publicKey = await _cryptoService.uploadFile();
-    if(publicKey != null){
-      setState(() {
-        controller.text = publicKey;
-        if(field == "private"){
-          _privateKey = true;
-        } else {
-          _publicKey = true;
-        }
-      });
-      return true;
-    } return false;
-  }
-
-  Future<String> _getPublicKey() async {
-    if(publicKeyTextController.text == ""){
-      await _generateKeyPair();
-      return publicKeyTextController.text;
-    }
-    return publicKeyTextController.text;
-  }
-
-  Future<bool> _applyCriptography() async {
-    if(cleanTextController.text == ""){
-      _dialogBuilder(
-          context: context,
-          title: "Atenção",
-          content: "Escreva um texto para ser criptografado",
-          activeDownload: false,
-          fileName: ""
-      );
-    } else {
-      var publicKey = await _getPublicKey();
-      var secret = await _cryptoService.cryptograph(
-          message: cleanTextController.text,
-          publicKey: _algorithm == "RSA" ? publicKey : null
-      );
-      if(secret != null){
-        secretTextController.text = secret;
-        return true;
-      }
-    }
-    return false;
-  }
-
-  Future<void> _dialogBuilder({
-    required BuildContext context,
-    required String title,
-    required String content,
-    required bool activeDownload,
-    required String fileName,
-    TextEditingController? field
-  }){
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(title),
-              IconButton(
-                icon: Icon(Icons.close_rounded, color: Colors.indigoAccent,),
-                onPressed: (){
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-          content: SingleChildScrollView(
-              child: Text(content)
-          ),
-          actionsAlignment: MainAxisAlignment.spaceBetween,
-          actions: <Widget>[
-            ElevatedButton.icon(
-              icon: Icon(Icons.download),
-                label: Text("Baixar"),
-                onPressed: activeDownload ?  (){
-                  _cryptoService.save(
-                      content: content,
-                      type: fileName
-                  );
-                  Navigator.of(context).pop();
-                } : null,
-            ),
-            ElevatedButton.icon(
-              icon: Icon(Icons.delete_forever),
-              label: Text("Limpar"),
-              onPressed: activeDownload ?  (){
-                field?.text = "";
-                if(field == privateKeyTextController){
-                  setState(() {
-                    _privateKey = false;
-                  });
-                } else if(field == publicKeyTextController){
-                  setState(() {
-                    _publicKey = false;
-                  });
-                }
-                Navigator.of(context).pop();
-              } : null,
-            ),
-          ],
-        );
-      },
+  _handleEncrypt() async {
+    String secret = await _cryptoServiceHash.cryptograph(
+        message: cleanTextController.text,
+        hash: _hash
     );
+    secretTextController.text = secret;
   }
 
   @override
@@ -173,7 +53,7 @@ class _PhoneHashFormState extends State<PhoneHashForm> {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Expanded(child: Text("Texto claro")),
-                  Expanded(child: Text("Texto criptografado"))
+                  Expanded(child: Text("Hash do texto"))
                 ],
               ),
               Row(
@@ -195,19 +75,6 @@ class _PhoneHashFormState extends State<PhoneHashForm> {
                   SizedBox(width: 8,),
                   Expanded(
                     child: TextFormField(
-                      onTap: (){
-                        _dialogBuilder(
-                          context: context,
-                          title: _algorithm == "RSA" ? "Texto criptografado" : "Hash",
-                          content: secretTextController.text != "" ?
-                            secretTextController.text :
-                            "Seu texto criptografado aparecerá aqui",
-                          activeDownload: secretTextController.text != "",
-                          fileName: _algorithm == "RSA" ? "secret_text" : "hash",
-                          field: secretTextController
-                        );
-                      },
-                      readOnly: true,
                       maxLines: 6,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
@@ -234,16 +101,16 @@ class _PhoneHashFormState extends State<PhoneHashForm> {
                       iconEnabledColor: Colors.deepPurple,
                       padding: EdgeInsets.symmetric(horizontal: 15.0),
                       borderRadius: BorderRadius.circular(10),
-                      items: algorithms.map<DropdownMenuItem<String>>((String? brandValue) =>
+                      items: hashes.map<DropdownMenuItem<String>>((String? hashValue) =>
                           DropdownMenuItem<String>(
-                              value:brandValue,
-                              child: Text("Hash $brandValue bytes")
+                              value:hashValue,
+                              child: Text("Hash $hashValue")
                           )
                       ).toList(),
-                      value: _algorithm,
-                      onChanged: (String? brandValue){
+                      value: _hash,
+                      onChanged: (String? hashValue){
                         setState(() {
-                          _algorithm = brandValue!;
+                          _hash = hashValue!;
                           cleanTextController.text = "";
                           secretTextController.text = "";
                         });
@@ -254,9 +121,7 @@ class _PhoneHashFormState extends State<PhoneHashForm> {
                   Expanded(
                     child: ElevatedButton(
                         onPressed: () async {
-                          if(_formKey.currentState!.validate()){
-                            var applied = await _applyCriptography();
-                          }
+                          _handleEncrypt();
                         },
                         child: Text("Aplicar", style: TextStyle(
                             color: Colors.white

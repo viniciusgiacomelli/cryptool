@@ -220,32 +220,30 @@ class _HomeFormState extends State<HomeForm> {
                                 ),
                             ),
                             SizedBox(height: 6,),
-                            Visibility(
-                              child: SizedBox(
-                                  width: double.maxFinite,
-                                  child: ElevatedButton.icon(
-                                    onPressed: (){
-                                      _handleDecrypt();
-                                    },
-                                    label: Text("Descriptografar",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        color: Colors.white
-                                      ),
-                                    ),
-                                    icon: Icon(Icons.keyboard_double_arrow_left_rounded,
-                                      color: Colors.white,
-                                      textDirection: TextDirection.ltr,
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.indigoAccent,
-                                        padding: EdgeInsets.symmetric(vertical: 15),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(8)
-                                        )
+                            SizedBox(
+                                width: double.maxFinite,
+                                child: ElevatedButton.icon(
+                                  onPressed: (){
+                                    _handleDecrypt();
+                                  },
+                                  label: Text("Descriptografar",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      color: Colors.white
                                     ),
                                   ),
-                              ),
+                                  icon: Icon(Icons.keyboard_double_arrow_left_rounded,
+                                    color: Colors.white,
+                                    textDirection: TextDirection.ltr,
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.indigoAccent,
+                                      padding: EdgeInsets.symmetric(vertical: 15),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8)
+                                      )
+                                  ),
+                                ),
                             )
                           ],
                         ),

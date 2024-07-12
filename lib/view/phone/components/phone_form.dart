@@ -97,6 +97,41 @@ class _PhoneFormState extends State<PhoneForm> {
     return false;
   }
 
+  _handleDecrypt() async {
+    String? errors;
+    if(secretTextController.text == ""){
+      errors = "- Cole o texto secreto para descriptografar \n";
+    }
+    if(!_privateKey){
+      errors = "$errors - Carregue uma chave privada";
+    }
+    if(errors != null){
+      _dialogBuilder(
+          context: context,
+          title: "Atenção",
+          content: errors,
+          activeDownload: false,
+          fileName: ""
+      );
+    } else {
+      var cleanText = await _cryptoService.decryptPKCS(
+          secret: secretTextController.text,
+          privateKey: privateKeyTextController.text
+      );
+      if(cleanText != null){
+        cleanTextController.text = cleanText;
+      } else {
+        _dialogBuilder(
+            context: context,
+            title: "Erro",
+            content: "Erro ao descriptogarafar",
+            activeDownload: false,
+            fileName: "Verifique a chave e o texto enviados e tente novamente"
+        );
+      }
+    }
+  }
+
   Future<void> _dialogBuilder({
     required BuildContext context,
     required String title,
@@ -227,38 +262,31 @@ class _PhoneFormState extends State<PhoneForm> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Expanded(
-                    child: DropdownButton(
-                      iconSize: 40.0,
-                      isExpanded: true,
-                      isDense: true,
-                      iconEnabledColor: Colors.deepPurple,
-                      padding: EdgeInsets.symmetric(horizontal: 15.0),
-                      borderRadius: BorderRadius.circular(10),
-                      items: algorithms.map<DropdownMenuItem<String>>((String? brandValue) =>
-                          DropdownMenuItem<String>(
-                              value:brandValue,
-                              child: Text("$brandValue")
-                          )
-                      ).toList(),
-                      value: _algorithm,
-                      onChanged: (String? brandValue){
-                        setState(() {
-                          _algorithm = brandValue!;
-                          cleanTextController.text = "";
-                          secretTextController.text = "";
-                        });
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if(_formKey.currentState!.validate()){
+                          var applied = await _applyCriptography();
+                        }
                       },
+                      child: Text("Criptografar", style: TextStyle(
+                          color: Colors.white
+                      ),),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.indigoAccent,
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)
+                          )
+                      ),
                     ),
                   ),
                   SizedBox( width: 12,),
                   Expanded(
                     child: ElevatedButton(
                         onPressed: () async {
-                          if(_formKey.currentState!.validate()){
-                            var applied = await _applyCriptography();
-                          }
+                          _handleDecrypt();
                         },
-                        child: Text("Aplicar", style: TextStyle(
+                        child: Text("Descriptografar", style: TextStyle(
                             color: Colors.white
                         ),),
                         style: ElevatedButton.styleFrom(
@@ -273,22 +301,23 @@ class _PhoneFormState extends State<PhoneForm> {
                 ],
               ),
               SizedBox(height: 16.0),
-              Visibility(
-                visible: _algorithm == "RSA",
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.indigoAccent,
-                      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)
-                      )
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Gerar novo par de chaves", style: TextStyle(color: Colors.white),),
-                      SizedBox( width: 8,),
-                      _generating ?
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.indigoAccent,
+                          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)
+                          )
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Gerar novo par de chaves", style: TextStyle(color: Colors.white),),
+                          SizedBox( width: 8,),
+                          _generating ?
                           SizedBox(
                             height: 17,
                             width: 17,
@@ -298,13 +327,16 @@ class _PhoneFormState extends State<PhoneForm> {
                             ),
                           ) :
                           Icon(Icons.cached_rounded, color: Colors.white,)
-                    ],
+                        ],
+                      ),
+                      onPressed: () async {
+                        await _generateKeyPair();
+                      },
+                    ),
                   ),
-                  onPressed: () async {
-                    await _generateKeyPair();
-                  },
-                ),
+                ],
               ),
+
               Visibility(
                 visible: _algorithm == "RSA",
                 child: Row(

@@ -14,10 +14,10 @@ class CryptoServiceHash {
   }) async {
     try{
       switch(hash){
-        case "512":
+        case "512 bytes":
           var result = await RSA.hash(message, Hash.SHA512);
           return result;
-        case "256":
+        case "256 bytes":
           var result = await RSA.hash(message, Hash.SHA256);
           return result;
         case "MD5":

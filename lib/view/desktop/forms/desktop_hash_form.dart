@@ -26,7 +26,7 @@ class _DesktopHashFormState extends State<DesktopHashForm> {
   final TextEditingController secretTextController     = TextEditingController();
   final TextEditingController keyController            = TextEditingController();
 
-  List<String> hashes = <String>["512", "256", "MD5"];
+  List<String> hashes = <String>["512 bytes", "256 bytes", "MD5"];
   late String _hash;
 
   @override
