@@ -33,14 +33,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
-    return MaterialApp(
-      title: 'Cryptool Flutter',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return Container(
+      color: Colors.black,
+      alignment: Alignment.center,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 1600),
+        child: MaterialApp(
+          title: 'Cryptool Flutter',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            useMaterial3: true,
+          ),
+          home: _handleScreen(width: width)
+          ),
       ),
-      home: _handleScreen(width: width)
-      );
+    );
   }
 }
 

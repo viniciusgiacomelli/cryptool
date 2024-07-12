@@ -1,7 +1,7 @@
 import 'package:cryptool/view/phone/components/decrypt_phone_form.dart';
 import 'package:flutter/material.dart';
 
-import '../desktop/components/home_header.dart';
+import '../global/components/home_header.dart';
 import 'components/phone_form.dart';
 
 class PhoneHomePage extends StatefulWidget {

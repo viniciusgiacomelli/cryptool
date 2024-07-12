@@ -1,7 +1,7 @@
 import 'package:cryptool/view/mini/components/mini_decrypt_phone_form.dart';
 import 'package:flutter/material.dart';
 
-import '../desktop/components/home_header.dart';
+import '../global/components/home_header.dart';
 import 'components/mini_phone_form.dart';
 
 class MiniHomePage extends StatefulWidget {

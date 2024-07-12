@@ -1,10 +1,9 @@
-import 'package:cryptool/view/desktop/components/desktop_hash_form.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cryptool/view/desktop/forms/desktop_hash_form.dart';
 import 'package:flutter/material.dart';
 
-import 'components/desktop_aes_form.dart';
-import 'components/home_form.dart';
-import 'components/home_header.dart';
+import 'forms/desktop_aes_form.dart';
+import 'forms/home_form.dart';
+import '../global/components/home_header.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -16,6 +15,7 @@ class HomePage extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
+          toolbarHeight: 70,
           title: HomeHeader(),
           bottom: const TabBar(
               tabs: [
