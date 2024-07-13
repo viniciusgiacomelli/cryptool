@@ -160,6 +160,19 @@ class _PhoneAesFormState extends State<PhoneAesForm> {
                   SizedBox(width: 8,),
                   Expanded(
                     child: TextFormField(
+                      onTap: (){
+                        _dialogBuilder(
+                            context: context,
+                            title: "Texto criptografado",
+                            content: secretTextController.text != "" ?
+                            secretTextController.text :
+                            "Seu texto criptografado aparecerá aqui",
+                            activeDownload: secretTextController.text != "",
+                            fileName: "aes_secret_text",
+                            field: secretTextController
+                        );
+                      },
+                      readOnly: true,
                       maxLines: 6,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),

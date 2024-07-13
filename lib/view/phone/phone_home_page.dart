@@ -3,7 +3,7 @@ import 'package:cryptool/view/phone/components/phone_hash_form.dart';
 import 'package:flutter/material.dart';
 
 import '../global/components/home_header.dart';
-import 'components/phone_form.dart';
+import 'components/phone_rsa_form.dart';
 
 class PhoneHomePage extends StatefulWidget {
   const PhoneHomePage({super.key});
