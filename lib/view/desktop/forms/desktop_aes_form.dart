@@ -37,6 +37,17 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
   }
 
   _handleEncrypt(){
+    if(cleanTextController.text == ""){
+      _dialogBuilder(
+          context: context,
+          content: "Insira um texto para ser criptografado"
+      );
+    } else if( keyController.text == ""){
+      _dialogBuilder(
+          context: context,
+          content: "Insira ou gere uma chave para criptografar o texto"
+      );
+    }
     Encrypted secret = _cryptoServiceAes.encrypt(
         message: cleanTextController.text,
         secret: keyController.text,
@@ -71,10 +82,54 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
     setState(() {
       _algorithm = algorithm!;
       _length = length;
-      cleanTextController.text = "";
       secretTextController.text = "";
       keyController.text = "";
     });
+  }
+
+  Future<void> _dialogBuilder({
+    required BuildContext context,
+    required String content,
+    TextEditingController? field
+  }){
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("Atençao!"),
+              IconButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.indigoAccent,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)
+                  )
+                ),
+                color: Colors.white,
+                  onPressed: (){
+                    Navigator.of(context).pop();
+                  },
+                  icon: Icon(Icons.close_rounded)
+              )
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Text(content),
+          ),
+          actionsAlignment: MainAxisAlignment.spaceEvenly,
+          // actions: <Widget>[
+          //   IconButton(
+          //     icon: Icon(Icons.close_rounded,  color: Colors.indigoAccent),
+          //     onPressed: (){
+          //       Navigator.of(context).pop();
+          //     },
+          //   ),
+          // ],
+        );
+      },
+    );
   }
 
   @override

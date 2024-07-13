@@ -5,17 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomeForm extends StatefulWidget {
-  const HomeForm({super.key});
+class DesktopRsaForm extends StatefulWidget {
+  const DesktopRsaForm({super.key});
 
   @override
-  State<HomeForm> createState() => _HomeFormState();
+  State<DesktopRsaForm> createState() => _DesktopRsaFormState();
 }
 
-class _HomeFormState extends State<HomeForm> {
+class _DesktopRsaFormState extends State<DesktopRsaForm> {
   GetIt getIt = GetIt.instance;
   late CryptoService _cryptoService;
-  late CryptoServiceAes _cryptoServiceAes;
 
   final _formKey = GlobalKey<FormState>();
   final TextEditingController cleanTextController      = TextEditingController();
@@ -30,7 +29,6 @@ class _HomeFormState extends State<HomeForm> {
   @override
   void initState() {
     _cryptoService = getIt.get<CryptoService>();
-    _cryptoServiceAes = getIt.get<CryptoServiceAes>();
     super.initState();
   }
 
@@ -96,6 +94,7 @@ class _HomeFormState extends State<HomeForm> {
     var publicKey = await _getPublicKey();
     var secret = await _cryptoService.cryptograph(
         message: cleanTextController.text,
+        publicKey: publicKey
     );
     if(secret != null){
       secretTextController.text = secret;

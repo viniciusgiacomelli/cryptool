@@ -1,4 +1,4 @@
-import 'package:cryptool/view/desktop/home_page.dart';
+import 'package:cryptool/view/desktop/desktop_home_page.dart';
 import 'package:cryptool/view/mini/mini_home_page.dart';
 import 'package:cryptool/view/phone/phone_home_page.dart';
 import 'package:cryptool/viewmodel/services/cripto_service_aes.dart';

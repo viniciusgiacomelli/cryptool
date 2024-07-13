@@ -1,4 +1,3 @@
-import 'package:cryptool/view/phone/components/decrypt_phone_form.dart';
 import 'package:cryptool/view/phone/components/phone_aes_form.dart';
 import 'package:cryptool/view/phone/components/phone_hash_form.dart';
 import 'package:flutter/material.dart';
@@ -44,20 +43,16 @@ class _PhoneHomePageState extends State<PhoneHomePage> {
         ],
       ),
       body: SingleChildScrollView(
-          child: Column(
-            children: [
-              HomeHeader(),
-              <Widget>[
-                PhoneForm(),
-                PhoneAesForm(),
-                PhoneHashForm(),
-              ][currentPageIndex]
-            ],
-          )
-          // child: <Widget>[
-          //   PhoneForm(),
-          //   DecryptPhoneForm()
-          // ][currentPageIndex]
+        child: Column(
+          children: [
+            HomeHeader(),
+            <Widget>[
+              PhoneForm(),
+              PhoneAesForm(),
+              PhoneHashForm(),
+            ][currentPageIndex]
+          ],
+        )
       )
     );
   }
