@@ -18,16 +18,21 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  Widget _handleScreen({ required double width}){
-    switch(width){
+  Widget _handleScreen({required double width}) {
+    switch (width) {
       case < 380:
         return MiniHomePage();
-      case < 870 :
+      case < 870:
         return PhoneHomePage();
       default:
         return HomePage();
     }
   }
+
+  //TODO temas de cores e dark mode
+  //TODO Hash criando mesmo com texto vazio
+  //TODO Aes Sem avisos de texto claro vazio
+  //TODO Quando RSA tenta descritpo grafar sem chave privada carregada, aparece null na lista antes da instruçao de carregar chave
 
   // This widget is the root of your application.
   @override
@@ -39,15 +44,14 @@ class MyApp extends StatelessWidget {
       child: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: 1600),
         child: MaterialApp(
-          title: 'Cryptool Flutter',
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            useMaterial3: true,
-          ),
-          home: _handleScreen(width: width)
-          ),
+            title: 'Cryptool Flutter',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              useMaterial3: true,
+            ),
+            home: _handleScreen(width: width)),
       ),
     );
   }
 }
-
