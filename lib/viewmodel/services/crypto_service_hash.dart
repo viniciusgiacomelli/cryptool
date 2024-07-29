@@ -1,19 +1,10 @@
-import 'dart:convert';
-
-import 'dart:io' show Platform;
 import 'package:fast_rsa/fast_rsa.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
-import 'web_downloader_service.dart';
 
-class CryptoServiceHash {
-
-  Future<String> cryptograph({
-    required String message,
-    String? hash
-  }) async {
-    try{
-      switch(hash){
+class CryptoServiceHash extends ChangeNotifier {
+  Future<String> cryptograph({required String message, String? hash}) async {
+    try {
+      switch (hash) {
         case "512 bytes":
           var result = await RSA.hash(message, Hash.SHA512);
           return result;
@@ -31,8 +22,4 @@ class CryptoServiceHash {
       return "ERRO! - Não foi possível criptografar corretamente a mensagem";
     }
   }
-
-
-
-
 }

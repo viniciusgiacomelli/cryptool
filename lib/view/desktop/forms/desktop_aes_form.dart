@@ -1,11 +1,10 @@
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:cryptool/viewmodel/services/cripto_service_aes.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class DesktopAesForm extends StatefulWidget {
   const DesktopAesForm({super.key});
@@ -15,14 +14,11 @@ class DesktopAesForm extends StatefulWidget {
 }
 
 class _DesktopAesFormState extends State<DesktopAesForm> {
-  GetIt getIt = GetIt.instance;
-  late CryptoServiceAes _cryptoServiceAes;
-
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController cleanTextController      = TextEditingController();
-  final TextEditingController secretTextController     = TextEditingController();
-  final TextEditingController keyController            = TextEditingController();
+  final TextEditingController cleanTextController = TextEditingController();
+  final TextEditingController secretTextController = TextEditingController();
+  final TextEditingController keyController = TextEditingController();
   Encrypted encrypted = Encrypted(Uint8List(2));
   List<String> algorithms = <String>["256", "192", "128"];
   late String _algorithm;
@@ -30,48 +26,43 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
 
   @override
   void initState() {
-    _cryptoServiceAes = getIt.get<CryptoServiceAes>();
     _algorithm = algorithms[0];
     _length = 32;
     super.initState();
   }
 
-  _handleEncrypt(){
-    if(cleanTextController.text == ""){
+  _handleEncrypt() {
+    if (cleanTextController.text == "") {
+      _dialogBuilder(
+          context: context, content: "Insira um texto para ser criptografado");
+    } else if (keyController.text == "") {
       _dialogBuilder(
           context: context,
-          content: "Insira um texto para ser criptografado"
-      );
-    } else if( keyController.text == ""){
-      _dialogBuilder(
-          context: context,
-          content: "Insira ou gere uma chave para criptografar o texto"
-      );
+          content: "Insira ou gere uma chave para criptografar o texto");
     }
-    Encrypted secret = _cryptoServiceAes.encrypt(
-        message: cleanTextController.text,
-        secret: keyController.text,
-    );
+    Encrypted secret = context.read<CryptoServiceAes>().encrypt(
+          message: cleanTextController.text,
+          secret: keyController.text,
+        );
     encrypted = secret;
     secretTextController.text = secret.base64;
   }
 
-  _handleDecrypt(){
-    String cleanText = _cryptoServiceAes.decrypt(
-        encrypted: encrypted,
-        secret: keyController.text
-    );
+  _handleDecrypt() {
+    String cleanText = context
+        .read<CryptoServiceAes>()
+        .decrypt(encrypted: encrypted, secret: keyController.text);
     cleanTextController.text = cleanText;
   }
 
-  _handleGenerateKey(){
-    String key = _cryptoServiceAes.generateKey(length: _length);
+  _handleGenerateKey() {
+    String key = context.read<CryptoServiceAes>().generateKey(length: _length);
     keyController.text = key;
   }
 
-  _handleChangeLength(String? algorithm){
+  _handleChangeLength(String? algorithm) {
     int length = 32;
-    switch(algorithm){
+    switch (algorithm) {
       case "256":
         length = 32;
       case "192":
@@ -87,11 +78,10 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
     });
   }
 
-  Future<void> _dialogBuilder({
-    required BuildContext context,
-    required String content,
-    TextEditingController? field
-  }){
+  Future<void> _dialogBuilder(
+      {required BuildContext context,
+      required String content,
+      TextEditingController? field}) {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -101,18 +91,15 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
             children: [
               Text("Atençao!"),
               IconButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.indigoAccent,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)
-                  )
-                ),
-                color: Colors.white,
-                  onPressed: (){
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.indigoAccent,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8))),
+                  color: Colors.white,
+                  onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  icon: Icon(Icons.close_rounded)
-              )
+                  icon: Icon(Icons.close_rounded))
             ],
           ),
           content: SingleChildScrollView(
@@ -143,21 +130,21 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
             children: [
               Row(
                 children: [
-                  Expanded( flex:2, child: Text("Texto claro" ,
-                    style: GoogleFonts.openSans(
-                        textStyle: TextStyle(
-                            fontSize: 18
-                        )
-                    ),
-                  )),
-                  Expanded( flex:1, child: SizedBox()),
-                  Expanded( flex:2, child: Text("Texto criptografado",
-                    style: GoogleFonts.openSans(
-                        textStyle: TextStyle(
-                            fontSize: 18
-                        )
-                    ),
-                  )),
+                  Expanded(
+                      flex: 2,
+                      child: Text(
+                        "Texto claro",
+                        style: GoogleFonts.openSans(
+                            textStyle: TextStyle(fontSize: 18)),
+                      )),
+                  Expanded(flex: 1, child: SizedBox()),
+                  Expanded(
+                      flex: 2,
+                      child: Text(
+                        "Texto criptografado",
+                        style: GoogleFonts.openSans(
+                            textStyle: TextStyle(fontSize: 18)),
+                      )),
                 ],
               ),
               Row(
@@ -170,10 +157,7 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
                           border: OutlineInputBorder(),
                           hintText: "Insira seu texto",
                           contentPadding: EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 8
-                          )
-                      ),
+                              vertical: 12, horizontal: 8)),
                       controller: cleanTextController,
                     ),
                   ),
@@ -191,11 +175,11 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
                                 onPressed: () {
                                   _handleEncrypt();
                                 },
-                                label: Text("Criptografar",
+                                label: Text(
+                                  "Criptografar",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white
-                                  ),
+                                      color: Colors.white),
                                 ),
                                 icon: Icon(
                                   Icons.keyboard_double_arrow_right_rounded,
@@ -205,27 +189,29 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
                                     backgroundColor: Colors.indigoAccent,
                                     padding: EdgeInsets.symmetric(vertical: 15),
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8)
-                                    )
-                                ),
+                                        borderRadius:
+                                            BorderRadius.circular(8))),
                               ),
                             ),
                           ),
-                          SizedBox(height: 6,),
+                          SizedBox(
+                            height: 6,
+                          ),
                           Visibility(
                             child: SizedBox(
                               width: double.maxFinite,
                               child: ElevatedButton.icon(
-                                onPressed: (){
+                                onPressed: () {
                                   _handleDecrypt();
                                 },
-                                label: Text("Descriptografar",
+                                label: Text(
+                                  "Descriptografar",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white
-                                  ),
+                                      color: Colors.white),
                                 ),
-                                icon: Icon(Icons.keyboard_double_arrow_left_rounded,
+                                icon: Icon(
+                                  Icons.keyboard_double_arrow_left_rounded,
                                   color: Colors.white,
                                   textDirection: TextDirection.ltr,
                                 ),
@@ -233,9 +219,8 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
                                     backgroundColor: Colors.indigoAccent,
                                     padding: EdgeInsets.symmetric(vertical: 15),
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8)
-                                    )
-                                ),
+                                        borderRadius:
+                                            BorderRadius.circular(8))),
                               ),
                             ),
                           )
@@ -251,16 +236,15 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
                           border: OutlineInputBorder(),
                           hintText: "O texto criptografado aparecerá aqui",
                           contentPadding: EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 8
-                          )
-                      ),
+                              vertical: 12, horizontal: 8)),
                       controller: secretTextController,
                     ),
                   ),
                 ],
               ),
-              SizedBox( height: 32,),
+              SizedBox(
+                height: 32,
+              ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -273,21 +257,23 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
                       iconEnabledColor: Colors.deepPurple,
                       padding: EdgeInsets.symmetric(horizontal: 15.0),
                       borderRadius: BorderRadius.circular(10),
-                      items: algorithms.map<DropdownMenuItem<String>>((String? algorithm) =>
-                          DropdownMenuItem<String>(
-                              value:algorithm,
-                              child: Text("Chave $algorithm bits")
-                          )
-                      ).toList(),
+                      items: algorithms
+                          .map<DropdownMenuItem<String>>((String? algorithm) =>
+                              DropdownMenuItem<String>(
+                                  value: algorithm,
+                                  child: Text("Chave $algorithm bits")))
+                          .toList(),
                       value: _algorithm,
-                      onChanged: (String? algorithm){
+                      onChanged: (String? algorithm) {
                         _handleChangeLength(algorithm);
                       },
                     ),
                   ),
                 ],
               ),
-              SizedBox( height: 8,),
+              SizedBox(
+                height: 8,
+              ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -303,18 +289,19 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
                       controller: keyController,
                     ),
                   ),
-                  SizedBox( width: 8,),
+                  SizedBox(
+                    width: 8,
+                  ),
                   Expanded(
                     flex: 1,
                     child: ElevatedButton.icon(
                       onPressed: () async {
                         _handleGenerateKey();
                       },
-                      label: Text("Gerar nova chave",
+                      label: Text(
+                        "Gerar nova chave",
                         style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white
-                        ),
+                            fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                       icon: Icon(
                         Icons.cached_rounded,
@@ -324,9 +311,7 @@ class _DesktopAesFormState extends State<DesktopAesForm> {
                           backgroundColor: Colors.indigoAccent,
                           padding: EdgeInsets.symmetric(vertical: 20),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)
-                          )
-                      ),
+                              borderRadius: BorderRadius.circular(8))),
                     ),
                   ),
                 ],
